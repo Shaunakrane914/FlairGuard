@@ -43,9 +43,15 @@ def create_app() -> FastAPI:
     app.include_router(orders.router)
     app.include_router(mlops.router)
 
-    # Static frontend hosting if built
-    dist_path = Path(__file__).resolve().parents[4] / "frontend" / "dist"
-    if dist_path.is_dir():
+    # Static frontend hosting if built (searches both container and local paths)
+    candidate_paths = [
+        Path(__file__).resolve().parents[4] / "frontend" / "dist" if len(Path(__file__).resolve().parents) >= 5 else None,
+        Path(__file__).resolve().parents[2] / "frontend" / "dist" if len(Path(__file__).resolve().parents) >= 3 else None,
+        Path("/app/frontend/dist"),
+        Path.cwd() / "frontend" / "dist",
+    ]
+    dist_path = next((p for p in candidate_paths if p is not None and p.is_dir()), None)
+    if dist_path:
         app.mount("/", StaticFiles(directory=str(dist_path), html=True), name="frontend")
 
     # Custom global exception handler

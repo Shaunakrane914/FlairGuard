@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  flairguard-platform:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flairguard-platform
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - FLAIRGUARD_ENV=production
+      - FLAIRGUARD_DB_PATH=/app/data/flairguard_platform.db
+      - FLAIRGUARD_DATA_DIR=/app/data/raw
+    volumes:
+      - flairguard-data:/app/data
+      - flairguard-mlruns:/app/mlruns
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  flairguard-data:
+    driver: local
+  flairguard-mlruns:
+    driver: local

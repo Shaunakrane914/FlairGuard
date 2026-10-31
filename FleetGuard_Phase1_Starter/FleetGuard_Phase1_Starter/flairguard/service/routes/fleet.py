@@ -86,6 +86,21 @@ def list_engines(
     return summaries
 
 
+@router.get("/kpis")
+def get_fleet_kpis():
+    """Return top-level aggregate KPIs for the platform dashboard."""
+    store = WorkOrderStore(settings.db_path, namespace="default")
+    orders = [o for o in store.get_all_work_orders() if o.get("status") in ("OPEN", "ACKNOWLEDGED", "IN_PROGRESS")]
+    open_escalations = sum(1 for o in orders if o.get("severity") == "ESCALATE_HUMAN")
+    return {
+        "total_monitored_engines": 360,
+        "active_work_orders": len(orders),
+        "open_escalations": open_escalations,
+        "sensors_monitored": 21,
+        "champion_policy": "Tuned Point-RUL",
+    }
+
+
 @router.get("/summary", response_model=FleetSummary)
 def get_fleet_summary(
     dataset: str = Query("FD002", description="Dataset identifier")

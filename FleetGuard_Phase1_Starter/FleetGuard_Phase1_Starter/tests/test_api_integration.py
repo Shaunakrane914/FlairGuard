@@ -201,3 +201,35 @@ def test_frontend_static_serving(client):
     assert res.status_code == 200
     assert "FlairGuard AI" in res.text
     assert "root" in res.text
+
+
+def test_mlops_lifecycle_and_promotion_gate(client):
+    """Verify MLOps retraining, evaluation gate, and MLflow tracking."""
+    # 1. Model Listing
+    res_list = client.get("/api/v1/models")
+    assert res_list.status_code == 200
+    models = res_list.json()
+    assert len(models) >= 2
+    
+    # 2. Test Passing Challenger
+    res_pass = client.post("/api/v1/models/retrain", json={
+        "dataset": "FD002",
+        "challenger_model": "LightGBM_Optuna",
+        "reveal_batch_size": 15
+    })
+    assert res_pass.status_code == 200
+    data_pass = res_pass.json()
+    assert data_pass["gate_passed"] is True
+    assert data_pass["promoted_to_champion"] is True
+    assert data_pass["improvement_pct"] > 2.0
+
+    # 3. Test Failing Challenger
+    res_fail = client.post("/api/v1/models/retrain", json={
+        "dataset": "FD002",
+        "challenger_model": "RegimeRandomForest",
+        "reveal_batch_size": 15
+    })
+    assert res_fail.status_code == 200
+    data_fail = res_fail.json()
+    assert data_fail["gate_passed"] is False
+    assert data_fail["promoted_to_champion"] is False

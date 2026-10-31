@@ -140,3 +140,4 @@ export interface RetrainResult {
   promoted_to_champion: boolean;
   message: string;
 }
+

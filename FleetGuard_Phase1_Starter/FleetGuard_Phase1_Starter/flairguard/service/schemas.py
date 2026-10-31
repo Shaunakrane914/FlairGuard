@@ -167,3 +167,22 @@ class ModelMetadataResponse(BaseModel):
     metrics: Dict[str, float]
     provenance: Dict[str, Any]
 
+
+class RetrainRequest(BaseModel):
+    dataset: Literal["FD001", "FD002"] = "FD002"
+    challenger_model: str = "LightGBM_Optuna"
+    reveal_batch_size: int = 10
+
+
+class RetrainResponse(BaseModel):
+    candidate_model: str
+    dataset: str
+    previous_rmse: float
+    new_rmse: float
+    improvement_pct: float
+    gate_passed: bool
+    promoted_to_champion: bool
+    message: str
+    mlflow_run_id: Optional[str] = None
+    mlflow_experiment_name: Optional[str] = None
+
