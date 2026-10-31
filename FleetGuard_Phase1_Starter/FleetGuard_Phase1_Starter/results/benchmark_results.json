@@ -1,0 +1,65 @@
+{
+  "metadata": {
+    "project": "FlairGuard AI",
+    "subset": "FD001",
+    "n_train_engines": 100,
+    "n_test_engines": 100,
+    "features_count": 67,
+    "rul_cap": 125,
+    "random_seed": 42
+  },
+  "results": [
+    {
+      "model": "Ridge",
+      "subset": "FD001",
+      "val_mae": 13.1248,
+      "val_rmse": 16.3691,
+      "val_phm08": 317.6834,
+      "test_mae": 15.1566,
+      "test_rmse": 19.6259,
+      "test_phm08": 686.8415,
+      "features_count": 67,
+      "rul_cap": 125,
+      "random_seed": 42
+    },
+    {
+      "model": "Random Forest",
+      "subset": "FD001",
+      "val_mae": 13.0782,
+      "val_rmse": 17.0349,
+      "val_phm08": 369.8141,
+      "test_mae": 13.9521,
+      "test_rmse": 19.3544,
+      "test_phm08": 768.5669,
+      "features_count": 67,
+      "rul_cap": 125,
+      "random_seed": 42
+    },
+    {
+      "model": "HistGradientBoosting",
+      "subset": "FD001",
+      "val_mae": 13.6877,
+      "val_rmse": 17.7892,
+      "val_phm08": 505.492,
+      "test_mae": 13.7062,
+      "test_rmse": 18.6929,
+      "test_phm08": 618.4588,
+      "features_count": 67,
+      "rul_cap": 125,
+      "random_seed": 42
+    },
+    {
+      "model": "LightGBM",
+      "subset": "FD001",
+      "val_mae": 13.6275,
+      "val_rmse": 18.03,
+      "val_phm08": 559.704,
+      "test_mae": 13.5577,
+      "test_rmse": 18.6121,
+      "test_phm08": 606.0246,
+      "features_count": 67,
+      "rul_cap": 125,
+      "random_seed": 42
+    }
+  ]
+}

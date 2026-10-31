@@ -1,0 +1,142 @@
+PAGE 1
+THINK. BUILD. CREATE. WIN
+CASE STUDY 1
+
+PAGE 2
+Background & Problem Statement
+A fleet of connected machines - trucks, buses, or industrial compressors - continuously streams sensor data such as vibration, 
+temperature, motor current, pressure and RPM. Today, failures are mostly caught after a breakdown or through fixed service 
+intervals, leading to unplanned downtime and higher maintenance cost.
+The team must build a closed-loop system that ingests this sensor data, detects early signs of degradation, predicts how much 
+useful life a machine has left, and then automatically raises a maintenance work order - with a human stepping in only 
+for exceptions. 
+◦ Failures are less common than normal reading, so the model should handle mild imbalance.
+◦ The pipeline should run end-to-end without manual steps once data is provided.
+◦ Keep it lightweight - no LLM. The agent should use simple rules or thresholds.
+◦ Use open-source tools; document the design clearly so it can be explained in a review.
+What the Team Must Demonstrate
+Ground Rules
+Use the NASA C-MAPSS Turbofan Engine Degradation dataset - a well-documented benchmark of medium complexity. It 
+contains run-to-failure sensor readings from a fleet of engines (21 sensors + 3 operating settings), with true Remaining Useful Life 
+values provided for evaluation.
+The dataset comes in four subsets (FD001–FD004) of increasing difficulty. You may choose to work with just one subset (FD001 
+is the simplest, and a good starting point) or take on all four for a more challenging solution.
+data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
+Dataset
+Official (NASA)
+Layer What to build
+Data Engineering
+Machine Learning
+MLOps
+Agents (non-LLM)
+data.nasa.gov/dataset/cmapss-jet-engine-simulated-data
+Read the sensor data (batch or streaming), clean it - handle missing values 
+and basic noise - and create simple rolling-window features (e.g., averages, 
+trends) for the model.
+Detect abnormal behavior and predict the Remaining Useful Life (RUL) - how 
+many cycles a machine has left before failure.
+Track experiments and model versions and show a simple retraining flow 
+when new data arrives, with a basic monitoring view.
+A rule-based Triage Agent that reads the model output, decides the 
+severity, and automatically creates a maintenance work order. No 
+LLM required. 
+Self-Healing Machines: Predictive Maintenance for a Connected Fleet
+THINK BUILD CREATE WIN| | |
+
+PAGE 3
+Round-wise Deliverables
+Suggested Tools
+Round 1 (Idea Submission) – Design deck
+These are optional starting points - you are free to use alternatives. The choice of models and algorithms is left 
+entirely to the team.
+Round 2 (Detailed Submission) - Proof of Concept
+•   Working pipeline on the chosen C-MAPSS subset(s)•  Architecture diagram: data 
+→ features  → model → agent → work order
+•  Approach for cleaning data and building 
+    features
+•  Choice of anomaly-detection and RUL 
+    models, with reasoning
+•  Logic the Triage Agent will use
+Layer
+Data Engineering
+Machine Learning
+MLOps
+Agent
+•   Trained model with RUL predictions
+•   A simple monitoring dashboard
+•   Agent auto-generating a work order + a 
+     demo retraining run
+Suggested tools / libraries
+Python, Pandas, NumPy; optionally PySpark for larger-scale processing
+scikit-learn; optionally TensorFlow or PyTorch
+MLflow for experiment and model tracking; Streamlit or Dash for a 
+simple dashboard
+Plain Python for rule-based logic - no LLM or agent framework 
+required
+THINK BUILD CREATE WIN| | |
+
+PAGE 4
+Criterion
+Problem understanding
+Architecture clarity
+Data engineering approach
+ML approach & reasoning
+MLOps & agent logic
+Dataset coverage
+Communication quality
+Assessed on
+Demonstrates a clear and accurate grasp of the problem 
+and its objectives.
+Presents a coherent, well-organized design with clearly 
+defined components and how they connect.
+Proposes a sound, well-reasoned approach to preparing 
+and transforming the input data.
+Selects suitable methods and justifies them with clear 
+reasoning; shows awareness of practical challenges.
+Describes a practical operational plan and a clear, logical 
+decision flow for the agent.
+Design accounts for the varying complexity of the available 
+data and scales its approach accordingly.
+Well-structured, unambiguous and internally consistent.
+Weight
+15%
+20%
+15%
+20%
+15%
+10%
+5%
+Criterion
+Working pipeline
+Data engineering quality
+Model performance
+MLOps in action
+Agent behavior
+Dataset coverage
+Demo & explanation
+Assessed on
+Runs end-to-end and produces results with minimal manual 
+intervention.
+Data handling is clean, robust and reproducible.
+Produces credible results with appropriate, sensibly 
+interpreted metrics.
+Operational elements are functional and demonstrable.
+The agent acts correctly and reliably on the model output.
+Depth and breadth of data tackled relative to the available 
+complexity.
+Team articulates its choices, trade-offs and potential 
+improvements convincingly.
+Weight
+20%
+15%
+15%
+10%
+10%
+10%
+20%
+Round 1 - Evaluation of Design 
+Round 1 submission are design and Architecture slides deck. The evaluation at this phase focuses on the clarity, 
+completeness and soundness of the proposed design.
+Round 2 - Evaluation of Proof of Concept 
+Round 2 is a working build, and the review focus shifts from plan to execution.
+THINK BUILD CREATE WIN| | |

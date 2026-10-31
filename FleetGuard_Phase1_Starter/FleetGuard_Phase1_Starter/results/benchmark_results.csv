@@ -1,0 +1,5 @@
+model,subset,val_mae,val_rmse,val_phm08,test_mae,test_rmse,test_phm08,features_count,rul_cap,random_seed
+Ridge,FD001,13.1248,16.3691,317.6834,15.1566,19.6259,686.8415,67,125,42
+Random Forest,FD001,13.0782,17.0349,369.8141,13.9521,19.3544,768.5669,67,125,42
+HistGradientBoosting,FD001,13.6877,17.7892,505.492,13.7062,18.6929,618.4588,67,125,42
+LightGBM,FD001,13.6275,18.03,559.704,13.5577,18.6121,606.0246,67,125,42

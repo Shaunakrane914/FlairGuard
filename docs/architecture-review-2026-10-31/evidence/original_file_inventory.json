@@ -1,0 +1,548 @@
+[
+  {
+    "path": "1790163819038-Teliport S4_Case Study and Submission Template\\Case Study 1_ACTG_Predictive_Maintenance.pdf",
+    "bytes": 6607627,
+    "sha256": "c0f78def7f9193434a11a8c75c38a44cd8b60295bc11840f019a4bfe5bdf8221",
+    "mtime_ns": 1790140795000000000
+  },
+  {
+    "path": "1790163819038-Teliport S4_Case Study and Submission Template\\Case Study 2_IDV_Battery_Energy_System.pdf",
+    "bytes": 4872901,
+    "sha256": "580fb527f99841c15f34576b91dcce4f397837d0d385873c291e50afbccc7105",
+    "mtime_ns": 1790141161000000000
+  },
+  {
+    "path": "1790163819038-Teliport S4_Case Study and Submission Template\\Case Study 3_MCV_Adaptive QoS Engine for Mixed Home Broadband Traffic.pdf",
+    "bytes": 5292181,
+    "sha256": "95bc8303753fcf1b02fb60687a742adf8c37a58acbd334f0da54ec64f8b3932c",
+    "mtime_ns": 1790141925000000000
+  },
+  {
+    "path": "1790163819038-Teliport S4_Case Study and Submission Template\\Case Study 4_HLS_End-to-End Medical Device Labeling Automation Management.pdf",
+    "bytes": 5718863,
+    "sha256": "a76a1c383415084432a70cac692134724c7c1e75e6071590b402a7d2ee558458",
+    "mtime_ns": 1790149204000000000
+  },
+  {
+    "path": "1790163819038-Teliport S4_Case Study and Submission Template\\Case Study 5_TBU_Vehicle Information using On-Device SLM or LLM.pdf",
+    "bytes": 3581829,
+    "sha256": "e2cb1c888a5cb1afd11f37e8043fe0de20aaf9d8e22f20551830a3fc2eeee4db",
+    "mtime_ns": 1790144318000000000
+  },
+  {
+    "path": "1790163819038-Teliport S4_Case Study and Submission Template\\FlairGuard_AI_Round1_Submission.pptx",
+    "bytes": 1187576,
+    "sha256": "1ea9f39fd28ebc6353240acc13e369a93dd631613c8eb9c7521399d6f20a629f",
+    "mtime_ns": 1793441002654137300
+  },
+  {
+    "path": "1790163819038-Teliport S4_Case Study and Submission Template\\Teliport S4_Submission Template.pptx",
+    "bytes": 991403,
+    "sha256": "5facb0fe16d335723963ccfb87b6e3a774eed0708283fb7804dc5cd811573e50",
+    "mtime_ns": 1790163145000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\Damage Propagation Modeling.pdf",
+    "bytes": 434158,
+    "sha256": "e7aaef80c177333f400a4c1099fe76e67d244569b9397c937ec4cd3ed5b44a27",
+    "mtime_ns": 1223048568000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\readme.txt",
+    "bytes": 2442,
+    "sha256": "4f5270554b775c67e73aff383c5436fd329d6e4cc3d3a116913276fae511269b",
+    "mtime_ns": 1223048476000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\RUL_FD001.txt",
+    "bytes": 429,
+    "sha256": "a19c8ec94931949d0485bdc35118206e9c81c4547b422efb9cf86f4ceddbceca",
+    "mtime_ns": 1222897242000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\RUL_FD002.txt",
+    "bytes": 1110,
+    "sha256": "c851dd96a6ea6998d3c4a8f834d3c8013aa90e93a6ed950dc826ad0655b2906b",
+    "mtime_ns": 1222897344000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\RUL_FD003.txt",
+    "bytes": 428,
+    "sha256": "df1e0566306b174a2de41c67a3e7a51877889598b78643fc3e5685259091b7cb",
+    "mtime_ns": 1222898160000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\RUL_FD004.txt",
+    "bytes": 1084,
+    "sha256": "196b836b85a95ac7fdbbf29c5fdf1657382eafa445644d114ffaaf50dc2975e1",
+    "mtime_ns": 1222897962000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\test_FD001.txt",
+    "bytes": 2228855,
+    "sha256": "3cda7109ce17bafb5443f2ac926cfcf88154b941b8c4cf95eb55d1ddd6f52851",
+    "mtime_ns": 1206405064000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\test_FD002.txt",
+    "bytes": 5734587,
+    "sha256": "de7b5bf7e998a985c378488480528b7c02cff1406a46740def362dda8d9b4e02",
+    "mtime_ns": 1221618274000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\test_FD003.txt",
+    "bytes": 2826651,
+    "sha256": "299babd63c8d987cef079c4a425429f33b3a34797d803bbe2ad48c29dbd0d790",
+    "mtime_ns": 1206405126000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\test_FD004.txt",
+    "bytes": 6957759,
+    "sha256": "1dc675fff0624bac10786927c6715b37d1297657137400d2b1a3138d777a3ba5",
+    "mtime_ns": 1221618402000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\train_FD001.txt",
+    "bytes": 3515356,
+    "sha256": "963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8",
+    "mtime_ns": 1206405064000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\train_FD002.txt",
+    "bytes": 9082480,
+    "sha256": "dac6c4dbc4e7c1bdeb5747da3d313d05c395bb99801b44a002b26a2ba13d788f",
+    "mtime_ns": 1221618270000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\train_FD003.txt",
+    "bytes": 4213862,
+    "sha256": "2abbe9968cc5e8eb091980f51b20f62bb4127336d3482cb52071d53bf23329e2",
+    "mtime_ns": 1206405124000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\CMAPSSData\\train_FD004.txt",
+    "bytes": 10350705,
+    "sha256": "27ef6160b6a1dcb2613a88de9c239f763b223f02cdc41dc5cdedc5dc189b6218",
+    "mtime_ns": 1221618396000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\.gitignore",
+    "bytes": 89,
+    "sha256": "913d796a5d83a5fc5a63820d5ac09a9776a44a1d286638632ed0416ffbf8b8af",
+    "mtime_ns": 1793418616000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\README.md",
+    "bytes": 4021,
+    "sha256": "cbd51b0cb220692cc97308d34a06b4ce81c8d2a9fee6f484f9bf221936f1b19e",
+    "mtime_ns": 1793418652000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\requirements.txt",
+    "bytes": 119,
+    "sha256": "a6ad05c9bae19b36f3300aaf8733252aaf406265c0a363b03d8815f321156b37",
+    "mtime_ns": 1793441027448265300
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\.pytest_cache\\.gitignore",
+    "bytes": 39,
+    "sha256": "e7c6bb30148cf667606dcd63e7ca77acaa3cfb0c8303bf09e6419e1e1669dc6d",
+    "mtime_ns": 1793440049122529200
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\.pytest_cache\\CACHEDIR.TAG",
+    "bytes": 191,
+    "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4",
+    "mtime_ns": 1793440049123611800
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\.pytest_cache\\README.md",
+    "bytes": 310,
+    "sha256": "420e808d79a6c25d3cda0af33bc4782314a14949866682c68ce8149e89b66b70",
+    "mtime_ns": 1793440049121521300
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\flairguard_triage.db",
+    "bytes": 6221824,
+    "sha256": "28b7e4ae7ae3cd4e09b3bfc324a1785065c0bea5417ebff34bcf2f848f1cceb5",
+    "mtime_ns": 1793442829771671300
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\anomaly.py",
+    "bytes": 6507,
+    "sha256": "b6e6c238d90cf2a979254cd4d1761f72bed07333c360d4f32723dc4a02270cca",
+    "mtime_ns": 1793441951721611200
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\data.py",
+    "bytes": 3817,
+    "sha256": "8a0f1afb2eb5fd45eb3aeff731d2b34c10a71823698f8058332b8fbd7b227d55",
+    "mtime_ns": 1793440832980039500
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\evaluation.py",
+    "bytes": 3579,
+    "sha256": "562f263a9614e7d86108bd0795f4ade96fe2946fcd757f32b987b624fe58e63a",
+    "mtime_ns": 1793441951905401000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\features.py",
+    "bytes": 1420,
+    "sha256": "f4664eb8305b0ec958a3fb9e2c8e5b8ad1e0ca339e1c6a83435777b2016fcab8",
+    "mtime_ns": 1793440833353643300
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\metrics.py",
+    "bytes": 1848,
+    "sha256": "31a674f4b0246282437d7849d1f85db84be184909b726a75adaf33028747c186",
+    "mtime_ns": 1793440834672243000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\models.py",
+    "bytes": 1477,
+    "sha256": "40b1ab07adb58be96f6766fca45246fc7f21284c20ceed9270118942a028e344",
+    "mtime_ns": 1793440834672243000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\policy_eval.py",
+    "bytes": 7414,
+    "sha256": "6c55cd2f486563f77add900637f0cf03de1b761451068f83a3bef10eb452c807",
+    "mtime_ns": 1793442380466066900
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\quality.py",
+    "bytes": 5094,
+    "sha256": "329cf1e469bb60770e40cc3372f3c12797448b947e76692fc29da19c44e1ffc3",
+    "mtime_ns": 1793441952804094100
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\storage.py",
+    "bytes": 9392,
+    "sha256": "5c6da423d14c86e15c153e5822dea46626413e28792fac705b9515bd8c1ff2f8",
+    "mtime_ns": 1793442026942451500
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\triage.py",
+    "bytes": 6577,
+    "sha256": "2712509fa54768d995ad93bd87bf0d84406c02d56cb6f972d462260c5186c0d8",
+    "mtime_ns": 1793441953196257800
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__init__.py",
+    "bytes": 206,
+    "sha256": "3d6f61e2629431cb89667e1729774fb8280118a9532a24aab713ee41948b9aaa",
+    "mtime_ns": 1793440827779176400
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\fleetguard\\data.py",
+    "bytes": 399,
+    "sha256": "c96468d435b8a18d6b2ed398f89d37cdddb94c8a5ea2ca6af9923af39f0ae160",
+    "mtime_ns": 1793440684289537300
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\fleetguard\\features.py",
+    "bytes": 193,
+    "sha256": "6a6c06be166b9cc5630f392221a5c4188e7f40d87281a76daf5344f98b5e2eca",
+    "mtime_ns": 1793440688802465500
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\fleetguard\\metrics.py",
+    "bytes": 132,
+    "sha256": "99877d17e626b328459b165f1105a46d5a0c8f3ea9a1d3c7c56b7ebe7806acb5",
+    "mtime_ns": 1793440694059797300
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\fleetguard\\__init__.py",
+    "bytes": 319,
+    "sha256": "cddf9cd9db1dc296277ab97403acbcd58d7da2ab9c074cf3086a6ad236dac87e",
+    "mtime_ns": 1793440678340886400
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\results\\benchmark_metrics_comparison.png",
+    "bytes": 259789,
+    "sha256": "bf7d5ad0e5db462cd47396c2a96e57393ee1be1800fbda864905fe5acec9500f",
+    "mtime_ns": 1793440886227625600
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\results\\benchmark_results.csv",
+    "bytes": 420,
+    "sha256": "5c996728ddf3c6d19b2d03658170dbf6a616a0cf6ae0b45477c08f56cec00f9e",
+    "mtime_ns": 1793440882093321600
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\results\\benchmark_results.json",
+    "bytes": 1518,
+    "sha256": "04d43433257837ff59c9b0c802ea806f6b55a3d1773781019670eaafc3bae204",
+    "mtime_ns": 1793440882096331000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\results\\phase2_anomaly_triage_evaluation.json",
+    "bytes": 4796,
+    "sha256": "5849ec891dc54aa970c40761263f21423642734d1aba9e8b8646a90c11895d35",
+    "mtime_ns": 1793442829827011800
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\results\\test_rul_trajectories_comparison.png",
+    "bytes": 712855,
+    "sha256": "0933923e5f564d2c864962d5d7f9d4b65acacfcbbc2f522e142e95ecbef963f5",
+    "mtime_ns": 1793440886578133400
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\scripts\\01_inspect.py",
+    "bytes": 1162,
+    "sha256": "2c4553dfadc5a298edbeaf37bf0b14a5be3407c488a01bab0431de86baa60acc",
+    "mtime_ns": 1793418616000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\scripts\\02_baseline.py",
+    "bytes": 3430,
+    "sha256": "310033aa8dfa12c5ad6a7d2773388ef0870ea21002fbb2496a7d4069cd965e25",
+    "mtime_ns": 1793418616000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\scripts\\03_benchmark.py",
+    "bytes": 10538,
+    "sha256": "0535a4e28f3fbe9baf04d74f4ab7098fdf3be57624fd587ddb57764bd6ec5e53",
+    "mtime_ns": 1793440750907940600
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\scripts\\04_build_submission_deck.py",
+    "bytes": 13871,
+    "sha256": "a3e84929d5b10eb25855d3faddb8c37046b29e6f0a3daa2b637efcfd0590f6d8",
+    "mtime_ns": 1793441058209178800
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\scripts\\05_anomaly_and_triage_evaluation.py",
+    "bytes": 10248,
+    "sha256": "49f91976e066bdafb283d2b8158c3edec5ac5d1d525065e739416ed6d89012c6",
+    "mtime_ns": 1793442390310463300
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\tests\\test_anomaly_and_triage.py",
+    "bytes": 8143,
+    "sha256": "680d8a83545c89e9caf7487d663fddbaa275746182173e86638bee05d5c5b387",
+    "mtime_ns": 1793442033780148500
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\tests\\test_data.py",
+    "bytes": 1615,
+    "sha256": "f29d573ea59c484d317841fab9f60c4dfc2f2060a2b2f7f3b0db3fd946e45e5e",
+    "mtime_ns": 1793418616000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\tests\\test_leakage_and_reproducibility.py",
+    "bytes": 4647,
+    "sha256": "8e2cfbedfaa5880949ef4659f6c6d6c4e8b326ff78691553d0d86576065fdca1",
+    "mtime_ns": 1793441058313900700
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\tests\\__pycache__\\test_anomaly_and_triage.cpython-313-pytest-8.4.2.pyc",
+    "bytes": 27228,
+    "sha256": "d8094156a7fd18dbd71872070f0469c37613f3b38a92193a723325e0877a665c",
+    "mtime_ns": 1793442042031701300
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\tests\\__pycache__\\test_data.cpython-313-pytest-8.4.2.pyc",
+    "bytes": 8958,
+    "sha256": "c112915bf23198b6db794e659824226ce4df485f50243886a610cbd569650965",
+    "mtime_ns": 1793440039784446700
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\tests\\__pycache__\\test_leakage_and_reproducibility.cpython-313-pytest-8.4.2.pyc",
+    "bytes": 13379,
+    "sha256": "633152fa6c4157dad733324a0b3cd9612447844fa768c13772e4e3f0e61c47a1",
+    "mtime_ns": 1793441985277695400
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\fleetguard\\__pycache__\\data.cpython-313.pyc",
+    "bytes": 520,
+    "sha256": "dd6c1b7cd944f7fdc013cc96b306f5bf56660d50c9c667321d0d36edbe75ae38",
+    "mtime_ns": 1793440703937854500
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\fleetguard\\__pycache__\\features.cpython-313.pyc",
+    "bytes": 405,
+    "sha256": "c5864a8c9922fcd04f9af006021ca2c0354766030d909912f7c36ec532ec6d36",
+    "mtime_ns": 1793440703953848800
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\fleetguard\\__pycache__\\metrics.cpython-313.pyc",
+    "bytes": 356,
+    "sha256": "5089384316eb77ff7d8f1839d87350ffd6790c37c68f3f5302088e1bc2cd58b0",
+    "mtime_ns": 1793440703964406500
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\fleetguard\\__pycache__\\__init__.cpython-313.pyc",
+    "bytes": 633,
+    "sha256": "e9d9a465c900c9f594b0d21c496c119e0d1ba3d9de27d8321a50bfb7b05a4446",
+    "mtime_ns": 1793440700910518000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\anomaly.cpython-313.pyc",
+    "bytes": 10765,
+    "sha256": "54861453868e92be2706faf185287fa5b5573282afe96255ac48f21b102fc838",
+    "mtime_ns": 1793441954431036100
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\data.cpython-313.pyc",
+    "bytes": 6836,
+    "sha256": "e5f6807946a061a637104ac5bf52608f9d1a66395c9a5937e7dc6bb20e8d5836",
+    "mtime_ns": 1793440916494112600
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\evaluation.cpython-313.pyc",
+    "bytes": 5282,
+    "sha256": "4172abc3efc6288aff35c71c3bd868b7eea423c307f83c32f59e351ca6ae2da8",
+    "mtime_ns": 1793442120984963500
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\features.cpython-313.pyc",
+    "bytes": 2503,
+    "sha256": "e84b92d61d53e63e50addb35af98fc762c9e7023ad66de9484ea50eea1ab6d81",
+    "mtime_ns": 1793440916496633800
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\metrics.cpython-313.pyc",
+    "bytes": 2739,
+    "sha256": "fa5f0ef894c043c892b4fc49e810dc50d0113ee2d39ba48cd5fb323b69b30f02",
+    "mtime_ns": 1793440916498624300
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\models.cpython-313.pyc",
+    "bytes": 1711,
+    "sha256": "6f3395a640597a8ee58355cde3925cfd33f81794c5ffe9f6b250498e8e0e8a87",
+    "mtime_ns": 1793440919057433100
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\policy_eval.cpython-313.pyc",
+    "bytes": 8279,
+    "sha256": "efe205b0130e366ca81701442ffd6235085b5bc1c85883b8b7b028125671ce4f",
+    "mtime_ns": 1793442422383492700
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\quality.cpython-313.pyc",
+    "bytes": 5677,
+    "sha256": "439b111c06595c7ea7088de0345941c47a23eef2915edbb2d76eec38dd9ec3b4",
+    "mtime_ns": 1793441984510679300
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\storage.cpython-313.pyc",
+    "bytes": 11915,
+    "sha256": "13aa7f3ff581c5cd5bf51146ccbe39d365afae02bbbee6c066be56c70bd1ab67",
+    "mtime_ns": 1793442067636074000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\triage.cpython-313.pyc",
+    "bytes": 5982,
+    "sha256": "5cc07fa8b05725b019ed1f72fd55fa5adba622bea2caa53f53dbf7b7ab19e521",
+    "mtime_ns": 1793441985112799200
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\flairguard\\__pycache__\\__init__.cpython-313.pyc",
+    "bytes": 436,
+    "sha256": "d8bcc409649567189becaf036e587f9f5a9b3a09e3f515a114a7117dc98a48e9",
+    "mtime_ns": 1793440916491120100
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\.gitkeep",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "mtime_ns": 1793418616000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\Damage Propagation Modeling.pdf",
+    "bytes": 434158,
+    "sha256": "e7aaef80c177333f400a4c1099fe76e67d244569b9397c937ec4cd3ed5b44a27",
+    "mtime_ns": 1223048568000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\readme.txt",
+    "bytes": 2442,
+    "sha256": "4f5270554b775c67e73aff383c5436fd329d6e4cc3d3a116913276fae511269b",
+    "mtime_ns": 1223048476000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\RUL_FD001.txt",
+    "bytes": 429,
+    "sha256": "a19c8ec94931949d0485bdc35118206e9c81c4547b422efb9cf86f4ceddbceca",
+    "mtime_ns": 1222897242000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\RUL_FD002.txt",
+    "bytes": 1110,
+    "sha256": "c851dd96a6ea6998d3c4a8f834d3c8013aa90e93a6ed950dc826ad0655b2906b",
+    "mtime_ns": 1222897344000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\RUL_FD003.txt",
+    "bytes": 428,
+    "sha256": "df1e0566306b174a2de41c67a3e7a51877889598b78643fc3e5685259091b7cb",
+    "mtime_ns": 1222898160000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\RUL_FD004.txt",
+    "bytes": 1084,
+    "sha256": "196b836b85a95ac7fdbbf29c5fdf1657382eafa445644d114ffaaf50dc2975e1",
+    "mtime_ns": 1222897962000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\test_FD001.txt",
+    "bytes": 2228855,
+    "sha256": "3cda7109ce17bafb5443f2ac926cfcf88154b941b8c4cf95eb55d1ddd6f52851",
+    "mtime_ns": 1206405064000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\test_FD002.txt",
+    "bytes": 5734587,
+    "sha256": "de7b5bf7e998a985c378488480528b7c02cff1406a46740def362dda8d9b4e02",
+    "mtime_ns": 1221618274000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\test_FD003.txt",
+    "bytes": 2826651,
+    "sha256": "299babd63c8d987cef079c4a425429f33b3a34797d803bbe2ad48c29dbd0d790",
+    "mtime_ns": 1206405126000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\test_FD004.txt",
+    "bytes": 6957759,
+    "sha256": "1dc675fff0624bac10786927c6715b37d1297657137400d2b1a3138d777a3ba5",
+    "mtime_ns": 1221618402000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\train_FD001.txt",
+    "bytes": 3515356,
+    "sha256": "963b5e22825b34d8b21c69e1aeb4af3e647050eb672ee8834ba4b5d91d2de0f8",
+    "mtime_ns": 1206405064000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\train_FD002.txt",
+    "bytes": 9082480,
+    "sha256": "dac6c4dbc4e7c1bdeb5747da3d313d05c395bb99801b44a002b26a2ba13d788f",
+    "mtime_ns": 1221618270000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\train_FD003.txt",
+    "bytes": 4213862,
+    "sha256": "2abbe9968cc5e8eb091980f51b20f62bb4127336d3482cb52071d53bf23329e2",
+    "mtime_ns": 1206405124000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\data\\raw\\train_FD004.txt",
+    "bytes": 10350705,
+    "sha256": "27ef6160b6a1dcb2613a88de9c239f763b223f02cdc41dc5cdedc5dc189b6218",
+    "mtime_ns": 1221618396000000000
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\.pytest_cache\\v\\cache\\lastfailed",
+    "bytes": 2,
+    "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "mtime_ns": 1793442069325093600
+  },
+  {
+    "path": "FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter\\.pytest_cache\\v\\cache\\nodeids",
+    "bytes": 1061,
+    "sha256": "73943c6783b0fb82fa92b329b7e0676d66dccc46cef691c9988c58fbd57b90ae",
+    "mtime_ns": 1793442098776267100
+  }
+]

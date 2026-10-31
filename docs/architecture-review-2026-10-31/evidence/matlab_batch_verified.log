@@ -1,0 +1,30 @@
+
+	Trial License -- for use to evaluate programs for possible purchase as an end-user only.
+
+Capability report: C:\Users\Shaunak Rane\Desktop\Tata\docs\architecture-review-2026-10-31\evidence\matlab_capabilities.json
+Release: 2026b
+                       MATLAB: 1
+                     SIMULINK: 1
+     Pred_Maintenance_Toolbox: 1
+           Statistics_Toolbox: 1
+               Signal_Toolbox: 1
+       Identification_Toolbox: 1
+       Neural_Network_Toolbox: 1
+    Distrib_Computing_Toolbox: 1
+         Optimization_Toolbox: 1
+        Curve_Fitting_Toolbox: 1
+              Control_Toolbox: 1
+                     Simscape: 1
+              Simscape_Fluids: 0
+        Simulink_Design_Optim: 1
+
+        residualSimilarityModel: [1×1 struct]
+        pairwiseSimilarityModel: [1×1 struct]
+         hashingSimilarityModel: [1×1 struct]
+         linearDegradationModel: [1×1 struct]
+    exponentialDegradationModel: [1×1 struct]
+       reliabilitySurvivalModel: [1×1 struct]
+                     statistics: [1×1 struct]
+                         signal: [1×1 struct]
+                       simulink: [1×1 struct]
+

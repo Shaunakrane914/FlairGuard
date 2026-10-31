@@ -1,0 +1,930 @@
+{
+  "project": "C:\\Users\\Shaunak Rane\\Desktop\\Tata\\FleetGuard_Phase1_Starter\\FleetGuard_Phase1_Starter",
+  "python": "3.13.5 (tags/v3.13.5:6cb20a2, Jun 11 2025, 16:15:46) [MSC v.1943 64 bit (AMD64)]",
+  "packages": {
+    "numpy": "2.1.3",
+    "pandas": "2.3.3",
+    "scikit-learn": "1.7.1",
+    "lightgbm": "4.7.0",
+    "pytest": "8.4.2",
+    "scipy": "1.16.3",
+    "matplotlib": "3.10.8",
+    "fastapi": "0.115.12"
+  },
+  "subsets": {
+    "FD001": {
+      "train_rows": 20631,
+      "test_rows": 13096,
+      "train_engines": 100,
+      "test_engines": 100,
+      "test_rul_min": 7.0,
+      "test_rul_max": 145.0,
+      "test_rul_above_125": 11,
+      "train_life_min": 128,
+      "train_life_max": 362,
+      "constant_train_columns": [
+        "setting_3",
+        "sensor_1",
+        "sensor_5",
+        "sensor_10",
+        "sensor_16",
+        "sensor_18",
+        "sensor_19"
+      ],
+      "consecutive_test_engine_ids": true
+    },
+    "FD002": {
+      "train_rows": 53759,
+      "test_rows": 33991,
+      "train_engines": 260,
+      "test_engines": 259,
+      "test_rul_min": 6.0,
+      "test_rul_max": 194.0,
+      "test_rul_above_125": 57,
+      "train_life_min": 128,
+      "train_life_max": 378,
+      "constant_train_columns": [],
+      "consecutive_test_engine_ids": true
+    },
+    "FD003": {
+      "train_rows": 24720,
+      "test_rows": 16596,
+      "train_engines": 100,
+      "test_engines": 100,
+      "test_rul_min": 6.0,
+      "test_rul_max": 145.0,
+      "test_rul_above_125": 15,
+      "train_life_min": 145,
+      "train_life_max": 525,
+      "constant_train_columns": [
+        "setting_3",
+        "sensor_1",
+        "sensor_5",
+        "sensor_16",
+        "sensor_18",
+        "sensor_19"
+      ],
+      "consecutive_test_engine_ids": true
+    },
+    "FD004": {
+      "train_rows": 61249,
+      "test_rows": 41214,
+      "train_engines": 249,
+      "test_engines": 248,
+      "test_rul_min": 6.0,
+      "test_rul_max": 195.0,
+      "test_rul_above_125": 67,
+      "train_life_min": 128,
+      "train_life_max": 543,
+      "constant_train_columns": [],
+      "consecutive_test_engine_ids": true
+    }
+  },
+  "duplicate_data_hashes": {
+    "Damage Propagation Modeling.pdf": true,
+    "readme.txt": true,
+    "RUL_FD001.txt": true,
+    "RUL_FD002.txt": true,
+    "RUL_FD003.txt": true,
+    "RUL_FD004.txt": true,
+    "test_FD001.txt": true,
+    "test_FD002.txt": true,
+    "test_FD003.txt": true,
+    "test_FD004.txt": true,
+    "train_FD001.txt": true,
+    "train_FD002.txt": true,
+    "train_FD003.txt": true,
+    "train_FD004.txt": true
+  },
+  "database": {
+    "schema": [
+      {
+        "name": "work_orders",
+        "sql": "CREATE TABLE work_orders (\n                    work_order_id TEXT PRIMARY KEY,\n                    engine_id INTEGER NOT NULL,\n                    cycle INTEGER NOT NULL,\n                    severity TEXT NOT NULL,\n                    status TEXT NOT NULL,\n                    action_type TEXT NOT NULL,\n                    predicted_rul REAL NOT NULL,\n                    uncertainty REAL NOT NULL,\n                    anomaly_score REAL NOT NULL,\n                    persistence_count INTEGER NOT NULL,\n                    decision_reason TEXT NOT NULL,\n                    created_at TEXT NOT NULL,\n                    updated_at TEXT NOT NULL\n                )"
+      },
+      {
+        "name": "sqlite_autoindex_work_orders_1",
+        "sql": null
+      },
+      {
+        "name": "audit_log",
+        "sql": "CREATE TABLE audit_log (\n                    log_id INTEGER PRIMARY KEY AUTOINCREMENT,\n                    engine_id INTEGER NOT NULL,\n                    cycle INTEGER NOT NULL,\n                    event_type TEXT NOT NULL,\n                    work_order_id TEXT,\n                    decision_reason TEXT NOT NULL,\n                    telemetry_snapshot_json TEXT,\n                    timestamp TEXT NOT NULL\n                )"
+      },
+      {
+        "name": "sqlite_sequence",
+        "sql": "CREATE TABLE sqlite_sequence(name,seq)"
+      },
+      {
+        "name": "idx_wo_engine_status",
+        "sql": "CREATE INDEX idx_wo_engine_status ON work_orders (engine_id, status)"
+      }
+    ],
+    "work_orders": [
+      {
+        "work_order_id": "WO-E001-C009",
+        "engine_id": 1,
+        "cycle": 9,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 124.68429032063541,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.43138095276948646,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:31:15.788488+00:00",
+        "updated_at": "2026-10-31T10:31:15.788488+00:00"
+      },
+      {
+        "work_order_id": "WO-E005-C025",
+        "engine_id": 5,
+        "cycle": 25,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 125.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.48433999069194905,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:31:22.000583+00:00",
+        "updated_at": "2026-10-31T10:31:22.000583+00:00"
+      },
+      {
+        "work_order_id": "WO-E011-C020",
+        "engine_id": 11,
+        "cycle": 20,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 125.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.46199288966448476,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:31:30.753216+00:00",
+        "updated_at": "2026-10-31T10:31:30.753216+00:00"
+      },
+      {
+        "work_order_id": "WO-E013-C036",
+        "engine_id": 13,
+        "cycle": 36,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 123.28344852399981,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.42291339948165374,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:31:39.216538+00:00",
+        "updated_at": "2026-10-31T10:31:39.216538+00:00"
+      },
+      {
+        "work_order_id": "WO-E019-C015",
+        "engine_id": 19,
+        "cycle": 15,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 117.70790078950657,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.47500494771935337,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:31:43.758200+00:00",
+        "updated_at": "2026-10-31T10:31:43.758200+00:00"
+      },
+      {
+        "work_order_id": "WO-E023-C020",
+        "engine_id": 23,
+        "cycle": 20,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 122.67204933861684,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.41713950636221636,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:31:48.426055+00:00",
+        "updated_at": "2026-10-31T10:31:48.426055+00:00"
+      },
+      {
+        "work_order_id": "WO-E031-C007",
+        "engine_id": 31,
+        "cycle": 7,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 125.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.4586113416725946,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:31:53.644546+00:00",
+        "updated_at": "2026-10-31T10:31:53.644546+00:00"
+      },
+      {
+        "work_order_id": "WO-E032-C011",
+        "engine_id": 32,
+        "cycle": 11,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 123.04705635845357,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.48975114874327336,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:32:00.611118+00:00",
+        "updated_at": "2026-10-31T10:32:00.611118+00:00"
+      },
+      {
+        "work_order_id": "WO-E034-C030",
+        "engine_id": 34,
+        "cycle": 30,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 125.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.41218104880041584,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:32:05.615300+00:00",
+        "updated_at": "2026-10-31T10:32:05.615300+00:00"
+      },
+      {
+        "work_order_id": "WO-E040-C007",
+        "engine_id": 40,
+        "cycle": 7,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 125.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.4530233668729185,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:32:11.741371+00:00",
+        "updated_at": "2026-10-31T10:32:11.741371+00:00"
+      },
+      {
+        "work_order_id": "WO-E045-C045",
+        "engine_id": 45,
+        "cycle": 45,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 125.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.5093595076897098,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:32:32.236991+00:00",
+        "updated_at": "2026-10-31T10:32:32.236991+00:00"
+      },
+      {
+        "work_order_id": "WO-E046-C012",
+        "engine_id": 46,
+        "cycle": 12,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 124.58100370423811,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.431014851960401,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:32:38.249889+00:00",
+        "updated_at": "2026-10-31T10:32:38.249889+00:00"
+      },
+      {
+        "work_order_id": "WO-E054-C019",
+        "engine_id": 54,
+        "cycle": 19,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 124.99169008866077,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.45790405066985557,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:32:48.867266+00:00",
+        "updated_at": "2026-10-31T10:32:48.867266+00:00"
+      },
+      {
+        "work_order_id": "WO-E071-C014",
+        "engine_id": 71,
+        "cycle": 14,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 121.33441764202679,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.4220443057231868,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:32:57.788436+00:00",
+        "updated_at": "2026-10-31T10:32:57.788436+00:00"
+      },
+      {
+        "work_order_id": "WO-E074-C006",
+        "engine_id": 74,
+        "cycle": 6,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 123.00232113499615,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.45153973284286186,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:33:06.322621+00:00",
+        "updated_at": "2026-10-31T10:33:06.322621+00:00"
+      },
+      {
+        "work_order_id": "WO-E077-C009",
+        "engine_id": 77,
+        "cycle": 9,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 125.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.4413017152904787,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:33:12.661246+00:00",
+        "updated_at": "2026-10-31T10:33:12.661246+00:00"
+      },
+      {
+        "work_order_id": "WO-E078-C004",
+        "engine_id": 78,
+        "cycle": 4,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_CONFLICT",
+        "predicted_rul": 124.5266413409942,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.5626757487992397,
+        "persistence_count": 4,
+        "decision_reason": "Conflicting telemetry evidence: persistent degradation detected (4 cycles, anomaly score=0.56) conflicts with optimistic predicted RUL (124.5 cycles). Manual inspection required.",
+        "created_at": "2026-10-31T10:33:24.158323+00:00",
+        "updated_at": "2026-10-31T10:33:24.158323+00:00"
+      },
+      {
+        "work_order_id": "WO-E081-C011",
+        "engine_id": 81,
+        "cycle": 11,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 125.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.404767777872571,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:33:32.129823+00:00",
+        "updated_at": "2026-10-31T10:33:32.129823+00:00"
+      },
+      {
+        "work_order_id": "WO-E084-C020",
+        "engine_id": 84,
+        "cycle": 20,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 119.92093724381255,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.45426956905469906,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:33:40.253902+00:00",
+        "updated_at": "2026-10-31T10:33:40.253902+00:00"
+      },
+      {
+        "work_order_id": "WO-E091-C017",
+        "engine_id": 91,
+        "cycle": 17,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_DATA_FAULT",
+        "predicted_rul": 124.19282891761976,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.473575723117187,
+        "persistence_count": 0,
+        "decision_reason": "Data quality defect (STUCK_SENSOR): Sensor flatlined identically across 5 consecutive cycles",
+        "created_at": "2026-10-31T10:33:47.031135+00:00",
+        "updated_at": "2026-10-31T10:33:47.031135+00:00"
+      }
+    ],
+    "event_counts": [
+      {
+        "event_type": "DUPLICATE_SUPPRESSED",
+        "count": 2993
+      },
+      {
+        "event_type": "HUMAN_ESCALATION",
+        "count": 20
+      }
+    ],
+    "event_cycle_ranges": [
+      {
+        "engine_id": 1,
+        "first_cycle": 9,
+        "last_cycle": 152,
+        "events": 144
+      },
+      {
+        "engine_id": 5,
+        "first_cycle": 25,
+        "last_cycle": 230,
+        "events": 206
+      },
+      {
+        "engine_id": 11,
+        "first_cycle": 20,
+        "last_cycle": 205,
+        "events": 186
+      },
+      {
+        "engine_id": 13,
+        "first_cycle": 36,
+        "last_cycle": 136,
+        "events": 101
+      },
+      {
+        "engine_id": 19,
+        "first_cycle": 15,
+        "last_cycle": 122,
+        "events": 108
+      },
+      {
+        "engine_id": 23,
+        "first_cycle": 20,
+        "last_cycle": 132,
+        "events": 113
+      },
+      {
+        "engine_id": 31,
+        "first_cycle": 7,
+        "last_cycle": 197,
+        "events": 191
+      },
+      {
+        "engine_id": 32,
+        "first_cycle": 11,
+        "last_cycle": 136,
+        "events": 126
+      },
+      {
+        "engine_id": 34,
+        "first_cycle": 30,
+        "last_cycle": 154,
+        "events": 125
+      },
+      {
+        "engine_id": 40,
+        "first_cycle": 7,
+        "last_cycle": 144,
+        "events": 138
+      },
+      {
+        "engine_id": 45,
+        "first_cycle": 45,
+        "last_cycle": 135,
+        "events": 91
+      },
+      {
+        "engine_id": 46,
+        "first_cycle": 12,
+        "last_cycle": 220,
+        "events": 209
+      },
+      {
+        "engine_id": 54,
+        "first_cycle": 19,
+        "last_cycle": 221,
+        "events": 203
+      },
+      {
+        "engine_id": 71,
+        "first_cycle": 14,
+        "last_cycle": 174,
+        "events": 161
+      },
+      {
+        "engine_id": 74,
+        "first_cycle": 6,
+        "last_cycle": 142,
+        "events": 137
+      },
+      {
+        "engine_id": 77,
+        "first_cycle": 9,
+        "last_cycle": 127,
+        "events": 119
+      },
+      {
+        "engine_id": 78,
+        "first_cycle": 4,
+        "last_cycle": 209,
+        "events": 206
+      },
+      {
+        "engine_id": 81,
+        "first_cycle": 11,
+        "last_cycle": 195,
+        "events": 185
+      },
+      {
+        "engine_id": 84,
+        "first_cycle": 20,
+        "last_cycle": 197,
+        "events": 178
+      },
+      {
+        "engine_id": 91,
+        "first_cycle": 17,
+        "last_cycle": 102,
+        "events": 86
+      }
+    ],
+    "integrity": [
+      [
+        "ok"
+      ]
+    ],
+    "foreign_keys_enabled": 0
+  },
+  "diagnostic_probes": {
+    "anomaly_recalculation": {
+      "zscore": {
+        "threshold": 3.101912705314175,
+        "same_sample_far": 0.05,
+        "original_noise_rate": 1.0,
+        "original_scale_rate": 1.0,
+        "only_cycle_plus_100_rate": 1.0,
+        "all_validation_cycles_alarm_fraction": 0.8098280098280098
+      },
+      "pca": {
+        "threshold": 0.3722489539925202,
+        "same_sample_far": 0.05,
+        "original_noise_rate": 1.0,
+        "original_scale_rate": 1.0,
+        "only_cycle_plus_100_rate": 1.0,
+        "all_validation_cycles_alarm_fraction": 0.8137592137592138
+      },
+      "iforest": {
+        "threshold": 0.5168770309693194,
+        "same_sample_far": 0.05,
+        "original_noise_rate": 1.0,
+        "original_scale_rate": 1.0,
+        "only_cycle_plus_100_rate": 0.0575,
+        "all_validation_cycles_alarm_fraction": 0.35945945945945945
+      }
+    },
+    "absolute_noise_sensor_equivalents": {
+      "sensor_2": 8.002535676161907,
+      "sensor_3": 0.6589935120888436,
+      "sensor_4": 0.5135374691118184,
+      "sensor_7": 4.873307703122107,
+      "sensor_8": 55.42179669780904,
+      "sensor_9": 0.35926460853368875,
+      "sensor_11": 17.232957821920884,
+      "sensor_12": 6.052545583762659,
+      "sensor_13": 55.358645864468045,
+      "sensor_14": 0.38191071281482797,
+      "sensor_15": 115.11453914403901,
+      "sensor_17": 2.6546013115311022,
+      "sensor_20": 23.651437337382706,
+      "sensor_21": 37.93295481818886
+    },
+    "human_to_critical": {
+      "first_decision": {
+        "engine_id": 1,
+        "cycle": 1,
+        "severity": "ESCALATE_HUMAN",
+        "action_type": "ESCALATE_HUMAN_CONFLICT",
+        "predicted_rul": 75.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.8,
+        "persistence_count": 5,
+        "decision_reason": "Conflicting telemetry evidence: persistent degradation detected (5 cycles, anomaly score=0.80) conflicts with optimistic predicted RUL (75.0 cycles). Manual inspection required.",
+        "store_status": "CREATED",
+        "work_order_id": "WO-E001-C001"
+      },
+      "second_decision": {
+        "engine_id": 1,
+        "cycle": 2,
+        "severity": "CRITICAL",
+        "action_type": "WORK_ORDER_IMMEDIATE_OVERHAUL",
+        "predicted_rul": 10.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.8,
+        "persistence_count": 5,
+        "decision_reason": "Critical degradation: Remaining useful life is 10.0 cycles (uncertainty +/-15.0), persistence=5. Immediate overhaul scheduled.",
+        "store_status": "SUPPRESSED",
+        "work_order_id": "WO-E001-C001"
+      },
+      "stored_order": {
+        "work_order_id": "WO-E001-C001",
+        "engine_id": 1,
+        "cycle": 1,
+        "severity": "ESCALATE_HUMAN",
+        "status": "OPEN",
+        "action_type": "ESCALATE_HUMAN_CONFLICT",
+        "predicted_rul": 75.0,
+        "uncertainty": 15.0,
+        "anomaly_score": 0.8,
+        "persistence_count": 5,
+        "decision_reason": "Conflicting telemetry evidence: persistent degradation detected (5 cycles, anomaly score=0.80) conflicts with optimistic predicted RUL (75.0 cycles). Manual inspection required.",
+        "created_at": "2026-10-31T11:33:23.452564+00:00",
+        "updated_at": "2026-10-31T11:33:23.452564+00:00"
+      }
+    },
+    "same_event_replay_audit_count": 3,
+    "closed_order_replay_exception": "IntegrityError: UNIQUE constraint failed: work_orders.work_order_id",
+    "changing_sensor_false_stuck": {
+      "is_valid": false,
+      "quality_code": "STUCK_SENSOR",
+      "details": {
+        "sensor": "sensor_8",
+        "stuck_value": 2388.001,
+        "window_cycles": 5,
+        "reason": "Sensor flatlined identically across 5 consecutive cycles"
+      }
+    },
+    "missing_key_assessment": {
+      "is_valid": true,
+      "quality_code": "NOMINAL",
+      "details": {}
+    },
+    "gap_then_next_assessment": {
+      "is_valid": false,
+      "quality_code": "IRREGULAR_CYCLE",
+      "details": {
+        "last_cycle": 1,
+        "current_cycle": 4,
+        "reason": "Non-consecutive cycle sequence"
+      }
+    }
+  },
+  "cv_summary_recomputed": {
+    "Ridge": {
+      "mae": {
+        "mean": 15.93766,
+        "population_std": 0.8608094716021659
+      },
+      "rmse": {
+        "mean": 19.47476,
+        "population_std": 1.2486966943177193
+      },
+      "phm08": {
+        "mean": 494.67071999999996,
+        "population_std": 126.24962785534696
+      }
+    },
+    "Random Forest": {
+      "mae": {
+        "mean": 13.750920000000002,
+        "population_std": 2.0413198577391043
+      },
+      "rmse": {
+        "mean": 18.81492,
+        "population_std": 2.5790419262974384
+      },
+      "phm08": {
+        "mean": 770.8105400000001,
+        "population_std": 454.2817361789822
+      }
+    },
+    "HistGradientBoosting": {
+      "mae": {
+        "mean": 13.287200000000002,
+        "population_std": 1.7475034042885293
+      },
+      "rmse": {
+        "mean": 17.8458,
+        "population_std": 1.9700227663659122
+      },
+      "phm08": {
+        "mean": 484.0973,
+        "population_std": 253.4559653646605
+      }
+    },
+    "LightGBM": {
+      "mae": {
+        "mean": 13.167659999999998,
+        "population_std": 1.5192272833253089
+      },
+      "rmse": {
+        "mean": 17.82634,
+        "population_std": 1.5469389510901843
+      },
+      "phm08": {
+        "mean": 458.95988,
+        "population_std": 202.36080950988907
+      }
+    }
+  },
+  "cv_paired_rmse_difference_lgb_minus_hist": {
+    "fold_differences": [
+      0.14690000000000225,
+      -0.7702000000000027,
+      0.8071000000000002,
+      -0.36129999999999995,
+      0.0801999999999996
+    ],
+    "mean": -0.019460000000000123,
+    "folds_lgb_lower": 2
+  },
+  "metric_probe": {
+    "implemented": {
+      "n_snapshots": 2,
+      "mae_cycles": 2.0,
+      "rmse_cycles": 2.0,
+      "phm08_score": 0.3877
+    },
+    "independent_phm08": 0.3877141986060999
+  },
+  "split": {
+    "fit_engines": [
+      2,
+      3,
+      4,
+      6,
+      7,
+      8,
+      9,
+      10,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      20,
+      21,
+      22,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      33,
+      35,
+      36,
+      37,
+      38,
+      39,
+      41,
+      42,
+      43,
+      44,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      72,
+      73,
+      75,
+      76,
+      79,
+      80,
+      82,
+      83,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100
+    ],
+    "validation_engines": [
+      1,
+      5,
+      11,
+      13,
+      19,
+      23,
+      31,
+      32,
+      34,
+      40,
+      45,
+      46,
+      54,
+      71,
+      74,
+      77,
+      78,
+      81,
+      84,
+      91
+    ],
+    "validation_min_life": 135,
+    "features": [
+      "cycle",
+      "setting_1",
+      "setting_2",
+      "setting_3",
+      "sensor_1",
+      "sensor_2",
+      "sensor_3",
+      "sensor_4",
+      "sensor_5",
+      "sensor_6",
+      "sensor_7",
+      "sensor_8",
+      "sensor_9",
+      "sensor_10",
+      "sensor_11",
+      "sensor_12",
+      "sensor_13",
+      "sensor_14",
+      "sensor_15",
+      "sensor_16",
+      "sensor_17",
+      "sensor_18",
+      "sensor_19",
+      "sensor_20",
+      "sensor_21",
+      "sensor_1_mean_5",
+      "sensor_1_mean_20",
+      "sensor_2_mean_5",
+      "sensor_2_mean_20",
+      "sensor_3_mean_5",
+      "sensor_3_mean_20",
+      "sensor_4_mean_5",
+      "sensor_4_mean_20",
+      "sensor_5_mean_5",
+      "sensor_5_mean_20",
+      "sensor_6_mean_5",
+      "sensor_6_mean_20",
+      "sensor_7_mean_5",
+      "sensor_7_mean_20",
+      "sensor_8_mean_5",
+      "sensor_8_mean_20",
+      "sensor_9_mean_5",
+      "sensor_9_mean_20",
+      "sensor_10_mean_5",
+      "sensor_10_mean_20",
+      "sensor_11_mean_5",
+      "sensor_11_mean_20",
+      "sensor_12_mean_5",
+      "sensor_12_mean_20",
+      "sensor_13_mean_5",
+      "sensor_13_mean_20",
+      "sensor_14_mean_5",
+      "sensor_14_mean_20",
+      "sensor_15_mean_5",
+      "sensor_15_mean_20",
+      "sensor_16_mean_5",
+      "sensor_16_mean_20",
+      "sensor_17_mean_5",
+      "sensor_17_mean_20",
+      "sensor_18_mean_5",
+      "sensor_18_mean_20",
+      "sensor_19_mean_5",
+      "sensor_19_mean_20",
+      "sensor_20_mean_5",
+      "sensor_20_mean_20",
+      "sensor_21_mean_5",
+      "sensor_21_mean_20"
+    ]
+  }
+}

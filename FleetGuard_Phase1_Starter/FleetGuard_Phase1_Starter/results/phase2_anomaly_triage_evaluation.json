@@ -1,0 +1,206 @@
+{
+  "cross_validation_uncertainty": {
+    "Ridge": {
+      "cv_mae_mean": 15.9377,
+      "cv_mae_std": 0.8608,
+      "cv_rmse_mean": 19.4748,
+      "cv_rmse_std": 1.2487,
+      "cv_phm08_mean": 494.6707,
+      "cv_phm08_std": 126.2496,
+      "raw_folds": {
+        "mae": [
+          15.4049,
+          16.888,
+          16.418,
+          16.4593,
+          14.5181
+        ],
+        "rmse": [
+          19.736,
+          20.3458,
+          19.9651,
+          20.3085,
+          17.0184
+        ],
+        "phm08": [
+          550.5903,
+          520.7749,
+          466.5756,
+          659.5956,
+          275.8172
+        ]
+      }
+    },
+    "Random Forest": {
+      "cv_mae_mean": 13.7509,
+      "cv_mae_std": 2.0413,
+      "cv_rmse_mean": 18.8149,
+      "cv_rmse_std": 2.579,
+      "cv_phm08_mean": 770.8105,
+      "cv_phm08_std": 454.2817,
+      "raw_folds": {
+        "mae": [
+          14.9432,
+          16.2578,
+          10.6514,
+          14.7438,
+          12.1584
+        ],
+        "rmse": [
+          19.1773,
+          22.7343,
+          15.3277,
+          20.0437,
+          16.7916
+        ],
+        "phm08": [
+          527.0594,
+          1584.4655,
+          527.142,
+          922.1936,
+          293.1922
+        ]
+      }
+    },
+    "HistGradientBoosting": {
+      "cv_mae_mean": 13.2872,
+      "cv_mae_std": 1.7475,
+      "cv_rmse_mean": 17.8458,
+      "cv_rmse_std": 1.97,
+      "cv_phm08_mean": 484.0973,
+      "cv_phm08_std": 253.456,
+      "raw_folds": {
+        "mae": [
+          14.8142,
+          14.783,
+          11.3321,
+          14.5292,
+          10.9775
+        ],
+        "rmse": [
+          18.6299,
+          19.9078,
+          15.2237,
+          19.688,
+          15.7796
+        ],
+        "phm08": [
+          351.0176,
+          633.483,
+          223.0561,
+          909.0233,
+          303.9065
+        ]
+      }
+    },
+    "LightGBM": {
+      "cv_mae_mean": 13.1677,
+      "cv_mae_std": 1.5192,
+      "cv_rmse_mean": 17.8263,
+      "cv_rmse_std": 1.5469,
+      "cv_phm08_mean": 458.9599,
+      "cv_phm08_std": 202.3608,
+      "raw_folds": {
+        "mae": [
+          14.5688,
+          13.9973,
+          11.6675,
+          14.5872,
+          11.0175
+        ],
+        "rmse": [
+          18.7768,
+          19.1376,
+          16.0308,
+          19.3267,
+          15.8598
+        ],
+        "phm08": [
+          395.7681,
+          578.4571,
+          254.0915,
+          791.5727,
+          274.91
+        ]
+      }
+    }
+  },
+  "anomaly_detectors": {
+    "Statistical_Deviation": {
+      "calibrated_threshold": 3.1019,
+      "target_far": 0.05,
+      "empirical_val_far": 0.05,
+      "noise_sensitivity_rate": 1.0,
+      "drift_sensitivity_rate": 1.0
+    },
+    "PCA_Reconstruction": {
+      "calibrated_threshold": 0.3722,
+      "target_far": 0.05,
+      "empirical_val_far": 0.05,
+      "noise_sensitivity_rate": 1.0,
+      "drift_sensitivity_rate": 1.0
+    },
+    "Isolation_Forest": {
+      "calibrated_threshold": 0.5169,
+      "target_far": 0.05,
+      "empirical_val_far": 0.05,
+      "noise_sensitivity_rate": 1.0,
+      "drift_sensitivity_rate": 1.0
+    }
+  },
+  "persistence_sensitivity": {
+    "K=1": {
+      "persistence_cycles": 1,
+      "nominal_false_alarms": 20,
+      "effective_nominal_far": 0.05
+    },
+    "K=3": {
+      "persistence_cycles": 3,
+      "nominal_false_alarms": 5,
+      "effective_nominal_far": 0.0125
+    },
+    "K=5": {
+      "persistence_cycles": 5,
+      "nominal_false_alarms": 2,
+      "effective_nominal_far": 0.005
+    },
+    "K=8": {
+      "persistence_cycles": 8,
+      "nominal_false_alarms": 0,
+      "effective_nominal_far": 0.0
+    }
+  },
+  "policy_comparison": [
+    {
+      "policy_name": "Fixed-Interval (135 cycles)",
+      "total_cost": 88.5,
+      "unplanned_breakdowns": 0,
+      "planned_maintenances": 20,
+      "inspections_dispatched": 0,
+      "avg_wasted_rul_cycles": 68.5,
+      "fleet_reliability_pct": 100.0
+    },
+    {
+      "policy_name": "Basic RUL Threshold (<= 25.0 cycles)",
+      "total_cost": 43.9,
+      "unplanned_breakdowns": 0,
+      "planned_maintenances": 20,
+      "inspections_dispatched": 0,
+      "avg_wasted_rul_cycles": 23.9,
+      "fleet_reliability_pct": 100.0
+    },
+    {
+      "policy_name": "FlairGuard Risk-Aware Triage Policy",
+      "total_cost": 61.0,
+      "unplanned_breakdowns": 0,
+      "planned_maintenances": 20,
+      "inspections_dispatched": 20,
+      "avg_wasted_rul_cycles": 37.0,
+      "fleet_reliability_pct": 100.0
+    }
+  ],
+  "database_audit_summary": {
+    "DUPLICATE_SUPPRESSED": 2993,
+    "HUMAN_ESCALATION": 20
+  }
+}

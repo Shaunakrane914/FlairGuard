@@ -1,0 +1,817 @@
+{
+  "version": "26.2.0.3433840 (R2026b) Update 1",
+  "release": "2026b",
+  "computer": "PCWIN64",
+  "products": [
+    {
+      "Name": "Aerospace Blockset",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Aerospace Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Antenna Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Audio Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Bioinformatics Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Bluetooth Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "C2000 Microcontroller Blockset",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Communications Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Computer Vision Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Control System Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Curve Fitting Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "DSP System Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Data Acquisition Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Database Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Datafeed Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Deep Learning Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Econometrics Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Financial Instruments Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Financial Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Fixed-Point Designer",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Fuzzy Logic Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Global Optimization Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Image Acquisition Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Image Processing Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Industrial Communication Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Instrument Control Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "MATLAB",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "MATLAB Coder",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "MATLAB Copilot",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "MATLAB Report Generator",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "MATLAB Test",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Mapping Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Medical Imaging Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Mixed-Signal Blockset",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Model Predictive Control Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Motor Control Blockset",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Navigation Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Optimization Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Parallel Computing Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Partial Differential Equation Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Phased Array System Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Point Cloud Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Predictive Maintenance Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "RF Blockset",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "RF PCB Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "RF Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "ROS Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "19-Jun-2026"
+    },
+    {
+      "Name": "Radar Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Raspberry Pi Blockset",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Reinforcement Learning Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Requirements Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Risk Management Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Robotics System Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Robust Control Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "STM32 Microcontroller Blockset",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Satellite Communications Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Sensor Fusion and Tracking Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Signal Integrity Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Signal Processing Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "SimBiology",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "SimEvents",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "13-Nov-2025"
+    },
+    {
+      "Name": "Simscape",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simscape Battery",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simscape Driveline",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simscape Electrical",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simscape Fluids",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simscape Multibody",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink 3D Animation",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Check",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Coder",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Control Design",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Copilot",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Coverage",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Design Optimization",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Design Verifier",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Desktop Real-Time",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Fault Analyzer",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Report Generator",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Test",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Simulink Variant Manager",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "SoC Blockset",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Spreadsheet Link",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Stateflow",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Statistics and Machine Learning Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "11-Jun-2026"
+    },
+    {
+      "Name": "Symbolic Math Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "System Composer",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "System Identification Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Text Analytics Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "UAV Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Vehicle Network Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Visual Inspection Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Wavelet Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Wireless Network Toolbox",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    },
+    {
+      "Name": "Wireless Testbench",
+      "Version": "26.2",
+      "Release": "(R2026b)",
+      "Date": "22-May-2026"
+    }
+  ],
+  "license_tests": {
+    "MATLAB": 1,
+    "SIMULINK": 1,
+    "Pred_Maintenance_Toolbox": 1,
+    "Statistics_Toolbox": 1,
+    "Signal_Toolbox": 1,
+    "Identification_Toolbox": 1,
+    "Neural_Network_Toolbox": 1,
+    "Distrib_Computing_Toolbox": 1,
+    "Optimization_Toolbox": 1,
+    "Curve_Fitting_Toolbox": 1,
+    "Control_Toolbox": 1,
+    "Simscape": 1,
+    "Simscape_Fluids": 0,
+    "Hydraulics": 0,
+    "GADS_Toolbox": 1,
+    "Wavelet_Toolbox": 1,
+    "Stateflow": 1,
+    "Simulink_Design_Optim": 1
+  },
+  "functions": {
+    "similarityModel": {
+      "exist_file": 2,
+      "exist_class": 8,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaint\\similarityModel.m"
+    },
+    "residualSimilarityModel": {
+      "exist_file": 2,
+      "exist_class": 8,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaint\\residualSimilarityModel.m"
+    },
+    "pairwiseSimilarityModel": {
+      "exist_file": 2,
+      "exist_class": 8,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaint\\pairwiseSimilarityModel.m"
+    },
+    "hashSimilarityModel": {
+      "exist_file": 2,
+      "exist_class": 8,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaint\\hashSimilarityModel.m"
+    },
+    "predictRUL": {
+      "exist_file": 0,
+      "exist_class": 0,
+      "path": ""
+    },
+    "linearDegradationModel": {
+      "exist_file": 2,
+      "exist_class": 8,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaint\\linearDegradationModel.m"
+    },
+    "exponentialDegradationModel": {
+      "exist_file": 2,
+      "exist_class": 8,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaint\\exponentialDegradationModel.m"
+    },
+    "reliabilitySurvivalModel": {
+      "exist_file": 2,
+      "exist_class": 8,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaint\\reliabilitySurvivalModel.m"
+    },
+    "monotonicity": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaint\\monotonicity.m"
+    },
+    "trendability": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaint\\trendability.m"
+    },
+    "prognosability": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaint\\prognosability.m"
+    },
+    "diagnosticFeatureDesigner": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\predmaint\\predmaintguis\\diagnosticFeatureDesigner.m"
+    },
+    "pca": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\stats\\stats\\pca.m"
+    },
+    "fitrensemble": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\stats\\classreg\\fitrensemble.m"
+    },
+    "fitrgp": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\stats\\classreg\\fitrgp.m"
+    },
+    "kmeans": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\stats\\stats\\kmeans.m"
+    },
+    "findpeaks": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\signal\\signal\\findpeaks.m"
+    },
+    "lowpass": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\signal\\signal\\lowpass.m"
+    },
+    "ssest": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\ident\\ident\\ssest.m"
+    },
+    "iddata": {
+      "exist_file": 2,
+      "exist_class": 8,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\shared\\controllib\\iodata\\@iddata\\iddata.m"
+    },
+    "trainnet": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\nnet\\deeptrain\\trainnet.m"
+    },
+    "dlnetwork": {
+      "exist_file": 2,
+      "exist_class": 8,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\nnet\\cnn\\dlnetwork.m"
+    },
+    "parpool": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\parallel\\cluster\\cluster\\parpool.m"
+    },
+    "sim": {
+      "exist_file": 7,
+      "exist_class": 0,
+      "path": "built-in (C:\\Program Files\\MATLAB\\R2026b\\toolbox\\simulink\\engine\\mi\\sim)"
+    },
+    "new_system": {
+      "exist_file": 0,
+      "exist_class": 0,
+      "path": "built-in (C:\\Program Files\\MATLAB\\R2026b\\toolbox\\simulink\\core\\api\\new_system)"
+    },
+    "simulink": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\simulink\\core\\api\\simulink.m"
+    },
+    "fmincon": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\shared\\optimlib\\fmincon.m"
+    },
+    "fit": {
+      "exist_file": 2,
+      "exist_class": 0,
+      "path": "C:\\Program Files\\MATLAB\\R2026b\\toolbox\\curvefit\\curvefit\\fit.m"
+    },
+    "fluids_lib": {
+      "exist_file": 0,
+      "exist_class": 0,
+      "path": ""
+    }
+  },
+  "smoke": {
+    "residualSimilarityModel": {
+      "status": "ok",
+      "class": "residualSimilarityModel",
+      "has_predictRUL": true
+    },
+    "pairwiseSimilarityModel": {
+      "status": "ok",
+      "class": "pairwiseSimilarityModel",
+      "has_predictRUL": true
+    },
+    "hashSimilarityModel": {
+      "status": "ok",
+      "class": "hashSimilarityModel",
+      "has_predictRUL": true
+    },
+    "linearDegradationModel": {
+      "status": "ok",
+      "class": "linearDegradationModel",
+      "has_predictRUL": true
+    },
+    "exponentialDegradationModel": {
+      "status": "ok",
+      "class": "exponentialDegradationModel",
+      "has_predictRUL": true
+    },
+    "reliabilitySurvivalModel": {
+      "status": "ok",
+      "class": "reliabilitySurvivalModel",
+      "has_predictRUL": true
+    },
+    "statistics": {
+      "status": "ok",
+      "latent": [
+        2.4051530990671375,
+        0.028180234266195384
+      ]
+    },
+    "signal": {
+      "status": "ok",
+      "peak_count": 2
+    },
+    "simulink": {
+      "status": "ok",
+      "loaded": true
+    }
+  },
+  "licenses_in_use": [
+    {
+      "feature": "identification_toolbox",
+      "user": ""
+    },
+    {
+      "feature": "matlab",
+      "user": ""
+    },
+    {
+      "feature": "pred_maintenance_toolbox",
+      "user": ""
+    },
+    {
+      "feature": "signal_toolbox",
+      "user": ""
+    },
+    {
+      "feature": "simulink",
+      "user": ""
+    },
+    {
+      "feature": "statistics_toolbox",
+      "user": ""
+    }
+  ]
+}

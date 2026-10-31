@@ -1,0 +1,38 @@
+{
+  "url": "https://data.nasa.gov/docs/legacy/CMAPSSData.zip",
+  "final_url": "https://data-nasa-bucket-production.s3.us-east-1.amazonaws.com/legacy/CMAPSSData.zip",
+  "bytes": 12425978,
+  "sha256": "74bef434a34db25c7bf72e668ea4cd52afe5f2cf8e44367c55a82bfd91a5a34f",
+  "members": [
+    "Damage Propagation Modeling.pdf",
+    "readme.txt",
+    "RUL_FD001.txt",
+    "RUL_FD002.txt",
+    "RUL_FD003.txt",
+    "RUL_FD004.txt",
+    "test_FD001.txt",
+    "test_FD002.txt",
+    "test_FD003.txt",
+    "test_FD004.txt",
+    "train_FD001.txt",
+    "train_FD002.txt",
+    "train_FD003.txt",
+    "train_FD004.txt"
+  ],
+  "matches": {
+    "Damage Propagation Modeling.pdf": true,
+    "readme.txt": true,
+    "RUL_FD001.txt": true,
+    "RUL_FD002.txt": true,
+    "RUL_FD003.txt": true,
+    "RUL_FD004.txt": true,
+    "test_FD001.txt": true,
+    "test_FD002.txt": true,
+    "test_FD003.txt": true,
+    "test_FD004.txt": true,
+    "train_FD001.txt": true,
+    "train_FD002.txt": true,
+    "train_FD003.txt": true,
+    "train_FD004.txt": true
+  }
+}
