@@ -44,9 +44,9 @@ def test_fleet_discovery(client):
     res_ds = client.get("/api/v1/fleet/datasets")
     assert res_ds.status_code == 200
     datasets = res_ds.json()
-    assert len(datasets) == 2
+    assert len(datasets) == 4
     ds_ids = [d["id"] for d in datasets]
-    assert "FD001" in ds_ids and "FD002" in ds_ids
+    assert "FD001" in ds_ids and "FD002" in ds_ids and "FD003" in ds_ids and "FD004" in ds_ids
 
     # Engines for FD002
     res_eng = client.get("/api/v1/fleet/engines?dataset=FD002&limit=10")
@@ -60,7 +60,7 @@ def test_fleet_discovery(client):
     res_kpis = client.get("/api/v1/fleet/kpis")
     assert res_kpis.status_code == 200
     kpis = res_kpis.json()
-    assert kpis["total_monitored_engines"] == 360
+    assert kpis["total_monitored_engines"] == 707
     assert kpis["champion_policy"] == "Tuned Point-RUL"
 
 
@@ -295,3 +295,34 @@ def test_frontend_static_serving(client):
     assert res.status_code == 200
     assert "FlairGuard AI" in res.text
     assert "root" in res.text
+
+
+def test_fleet_maintenance_scheduler_endpoints(client):
+    """Verify depot bay scheduling, queue prioritization, and policy comparison under constraints."""
+    # 1. Snapshot endpoint
+    res_snap = client.get("/api/v1/fleet/scheduler/snapshot?dataset=FD002&num_bays=3&target_cycle=100")
+    assert res_snap.status_code == 200
+    snapshot = res_snap.json()
+    assert snapshot["num_bays"] == 3
+    assert len(snapshot["bays"]) == 3
+    assert snapshot["active_policy"] == "RISK_AWARE"
+    assert "bays occupied" in snapshot["summary_message"]
+
+    # 2. Simulation comparison endpoint
+    res_sim = client.post("/api/v1/fleet/scheduler/simulate", json={
+        "dataset": "FD002",
+        "num_bays": 2,
+        "service_duration": 4,
+        "engine_limit": 15,
+        "service_threshold_rul": 25.0
+    })
+    assert res_sim.status_code == 200
+    comparison = res_sim.json()
+    assert len(comparison) == 4
+    policies = [c["policy"] for c in comparison]
+    assert "FCFS" in policies
+    assert "EDF" in policies
+    assert "RUL_PRIORITY" in policies
+    assert "RISK_AWARE" in policies
+    assert all(c["total_fleet_cost"] >= 0 for c in comparison)
+    assert all(0 <= c["bay_utilization_pct"] <= 100 for c in comparison)

@@ -64,7 +64,7 @@ class RetrainingEngine:
     ) -> Dict[str, Any]:
         """Execute genuine end-to-end retraining with model fitting and evaluation."""
         ds = dataset.upper()
-        if ds not in ("FD001", "FD002"):
+        if ds not in ("FD001", "FD002", "FD003", "FD004"):
             raise ValueError(f"Unsupported retraining dataset {dataset}")
 
         job_id = f"job-{ds.lower()}-{uuid.uuid4().hex[:8]}"
@@ -92,7 +92,7 @@ class RetrainingEngine:
             feat_df, feat_cols = add_causal_features(train_labeled)
 
             # 2. Strict Partitioning: Fit engines + newly revealed batch vs held-out validation
-            if ds == "FD001":
+            if ds in ("FD001", "FD003"):
                 # Total 100 engines.
                 # Base fit: engines 1..40.
                 # Newly revealed completed engines: 41..(40 + reveal_batch_size)
@@ -101,7 +101,7 @@ class RetrainingEngine:
                 fit_mask = feat_df.engine_id <= max_train_eng
                 val_mask = (feat_df.engine_id >= 71) & (feat_df.engine_id <= 90)
             else:
-                # Total 260 engines.
+                # Total 249-260 engines.
                 # Base fit: engines 1..120.
                 # Newly revealed engines: 121..(120 + reveal_batch_size)
                 # Validation engines: 201..230 (30 held-out evaluation engines)
@@ -129,9 +129,10 @@ class RetrainingEngine:
             challenger_nasa = challenger_metrics["phm08_score"]
 
             # 5. Evaluate active champion model on identical validation engines
-            active_bundle = model_registry.get_bundle(ds)
+            active_bundle = {}
             try:
-                if ds == "FD001" and "model" in active_bundle:
+                active_bundle = model_registry.get_bundle(ds)
+                if ds in ("FD001", "FD003") and "model" in active_bundle:
                     # Align feature columns
                     champ_features = active_bundle["features"]
                     X_val_champ = val_data[champ_features]
@@ -146,7 +147,7 @@ class RetrainingEngine:
                 champ_metrics = regression_metrics(y_val, champ_preds)
                 champion_rmse = champ_metrics["rmse_cycles"]
             except Exception:
-                champion_rmse = 18.02 if ds == "FD001" else 48.88
+                champion_rmse = 18.02 if ds in ("FD001", "FD003") else 48.88
 
             # 6. Evaluate Promotion Gate
             improvement_pct = ((champion_rmse - challenger_rmse) / champion_rmse) * 100.0

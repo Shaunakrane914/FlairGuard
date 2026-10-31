@@ -10,6 +10,8 @@ import type {
   AuditLogRecord,
   ModelListing,
   RetrainResult,
+  FleetScheduleSnapshot,
+  SchedulingMetrics,
 } from "../types";
 
 const BASE_URL = "/api/v1";
@@ -198,4 +200,29 @@ export const api = {
       selected_model: string;
       independent_evaluator_verified: boolean;
     }>>("/evidence/provenance"),
+
+  // Fleet Maintenance Scheduling
+  getSchedulerSnapshot: (
+    dataset: string = "FD002",
+    numBays: number = 3,
+    serviceDuration: number = 4,
+    targetCycle: number = 120,
+    policy: string = "RISK_AWARE",
+    engineLimit: number = 30
+  ) =>
+    request<FleetScheduleSnapshot>(
+      `/fleet/scheduler/snapshot?dataset=${dataset}&num_bays=${numBays}&service_duration=${serviceDuration}&target_cycle=${targetCycle}&policy=${policy}&engine_limit=${engineLimit}`
+    ),
+
+  simulateScheduler: (data: {
+    dataset: string;
+    num_bays: number;
+    service_duration: number;
+    engine_limit: number;
+    service_threshold_rul: number;
+  }) =>
+    request<SchedulingMetrics[]>("/fleet/scheduler/simulate", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };

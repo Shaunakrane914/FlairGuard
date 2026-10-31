@@ -143,3 +143,52 @@ export interface RetrainResult {
   message: string;
 }
 
+export interface BayState {
+  bay_id: number;
+  engine_id: number | null;
+  cycles_remaining: number;
+  status: "IDLE" | "OCCUPIED";
+}
+
+export interface QueuedEngineState {
+  engine_id: number;
+  dataset: string;
+  requested_cycle: number;
+  current_cycle: number;
+  predicted_rul: number;
+  uncertainty_sigma: number;
+  urgency_score: number;
+  waiting_cycles: number;
+  status: string;
+}
+
+export interface FleetScheduleSnapshot {
+  timestamp_cycle: number;
+  num_bays: number;
+  bays: BayState[];
+  queue: QueuedEngineState[];
+  active_policy: string;
+  summary_message: string;
+}
+
+export interface SchedulingMetrics {
+  policy: string;
+  num_bays: number;
+  service_duration: number;
+  total_engines_evaluated: number;
+  serviced_count: number;
+  failure_count: number;
+  mean_queue_wait_cycles: number;
+  max_queue_wait_cycles: number;
+  mean_wasted_cycles: number;
+  bay_utilization_pct: number;
+  total_fleet_cost: number;
+  cost_breakdown: {
+    failure_penalties: number;
+    maintenance_executions: number;
+    wasted_useful_life: number;
+    queue_delays: number;
+  };
+  operational_recommendation: string;
+}
+

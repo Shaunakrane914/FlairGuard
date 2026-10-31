@@ -1,11 +1,19 @@
 """Fleet management and engine discovery endpoints."""
-from typing import List, Optional
-from fastapi import APIRouter, Query, HTTPException
+from typing import List, Optional, Dict, Any
+from fastapi import APIRouter, Query, HTTPException, Body
+from pydantic import BaseModel, Field
 from flairguard.service.schemas import DatasetInfo, EngineSummary, FleetSummary
 from flairguard.service.config import settings
 from flairguard.service.models_registry import model_registry
 from flairguard.data import load_subset
 from flairguard.storage import WorkOrderStore
+from flairguard.fleet_scheduler import (
+    FleetMaintenanceScheduler,
+    build_profiles_from_dataset,
+    SchedulePolicy,
+    FleetScheduleSnapshot,
+    SchedulingMetrics,
+)
 
 router = APIRouter(prefix="/api/v1/fleet", tags=["Fleet Management"])
 
@@ -29,7 +37,27 @@ DATASET_METADATA = {
         test_engines=259,
         total_records=87455,
         description="Six complex operating conditions (varying altitude, Mach, throttle) with HPC degradation."
-    )
+    ),
+    "FD003": DatasetInfo(
+        id="FD003",
+        name="NASA C-MAPSS FD003 (Dual Fault Mode)",
+        operating_conditions=1,
+        fault_modes=2,
+        train_engines=100,
+        test_engines=100,
+        total_records=41316,
+        description="Sea level condition with two concurrent degradation modes: HPC and Fan degradation."
+    ),
+    "FD004": DatasetInfo(
+        id="FD004",
+        name="NASA C-MAPSS FD004 (Multi-Regime Dual Fault)",
+        operating_conditions=6,
+        fault_modes=2,
+        train_engines=249,
+        test_engines=248,
+        total_records=102463,
+        description="Six flight conditions with two concurrent degradation modes: HPC and Fan degradation."
+    ),
 }
 
 
@@ -92,8 +120,9 @@ def get_fleet_kpis():
     store = WorkOrderStore(settings.db_path, namespace="default")
     orders = [o for o in store.get_all_work_orders() if o.get("status") in ("OPEN", "ACKNOWLEDGED", "IN_PROGRESS")]
     open_escalations = sum(1 for o in orders if o.get("severity") == "ESCALATE_HUMAN")
+    total_monitored = sum(m.test_engines for m in DATASET_METADATA.values())
     return {
-        "total_monitored_engines": 360,
+        "total_monitored_engines": total_monitored,
         "active_work_orders": len(orders),
         "open_escalations": open_escalations,
         "sensors_monitored": 21,
@@ -167,3 +196,66 @@ def get_engine_trajectory(
         "total_cycles": len(records),
         "trajectory": records
     }
+
+
+class SchedulerSimulationRequest(BaseModel):
+    dataset: str = "FD002"
+    num_bays: int = Field(3, ge=1, le=10)
+    service_duration: int = Field(4, ge=1, le=20)
+    engine_limit: int = Field(30, ge=5, le=200)
+    service_threshold_rul: float = Field(25.0, ge=5.0, le=50.0)
+
+
+@router.get("/scheduler/snapshot", response_model=FleetScheduleSnapshot)
+def get_scheduler_snapshot(
+    dataset: str = Query("FD002", description="Dataset identifier (FD001-FD004)"),
+    num_bays: int = Query(3, ge=1, le=10),
+    service_duration: int = Query(4, ge=1, le=20),
+    target_cycle: int = Query(120, ge=1, le=350),
+    policy: str = Query("RISK_AWARE", description="Dispatch policy: FCFS, EDF, RUL_PRIORITY, RISK_AWARE"),
+    engine_limit: int = Query(30, ge=5, le=100),
+):
+    """Retrieve real-time maintenance depot status (active bay occupation and prioritized queue)."""
+    ds = dataset.upper()
+    if ds not in DATASET_METADATA:
+        raise HTTPException(status_code=404, detail=f"Dataset {dataset} not supported")
+        
+    try:
+        pol_enum = SchedulePolicy(policy.upper())
+    except ValueError:
+        pol_enum = SchedulePolicy.RISK_AWARE
+        
+    try:
+        profiles = build_profiles_from_dataset(settings.data_dir, ds, engine_limit=engine_limit)
+        scheduler = FleetMaintenanceScheduler(num_bays=num_bays, service_duration=service_duration)
+        snapshot = scheduler.get_live_snapshot(
+            profiles=profiles,
+            target_cycle=target_cycle,
+            policy=pol_enum,
+            dataset=ds,
+        )
+        return snapshot
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate depot snapshot: {str(e)}")
+
+
+@router.post("/scheduler/simulate", response_model=List[SchedulingMetrics])
+def run_scheduler_simulation(
+    req: SchedulerSimulationRequest = Body(...),
+):
+    """Simulate and compare all 4 fleet dispatch policies under constrained depot capacity."""
+    ds = req.dataset.upper()
+    if ds not in DATASET_METADATA:
+        raise HTTPException(status_code=404, detail=f"Dataset {req.dataset} not supported")
+        
+    try:
+        profiles = build_profiles_from_dataset(settings.data_dir, ds, engine_limit=req.engine_limit)
+        scheduler = FleetMaintenanceScheduler(
+            num_bays=req.num_bays,
+            service_duration=req.service_duration,
+            service_threshold_rul=req.service_threshold_rul,
+        )
+        comparison = scheduler.evaluate_comparison(profiles)
+        return comparison
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Simulation failed: {str(e)}")

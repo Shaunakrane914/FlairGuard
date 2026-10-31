@@ -2,18 +2,20 @@ import React, { useState } from "react";
 import { FleetOverviewView } from "./views/FleetOverviewView";
 import { EngineDiagnosticsView } from "./views/EngineDiagnosticsView";
 import { ScenarioLabView } from "./views/ScenarioLabView";
+import { FleetSchedulerView } from "./views/FleetSchedulerView";
 import { MaintenanceConsoleView } from "./views/MaintenanceConsoleView";
 import { EvidenceCenterView } from "./views/EvidenceCenterView";
 import {
   LayoutDashboard,
   Gauge,
   Sliders,
+  Warehouse,
   Wrench,
   Award,
   Zap,
 } from "lucide-react";
 
-export type NavTab = "fleet" | "diagnostics" | "scenario" | "maintenance" | "evidence";
+export type NavTab = "fleet" | "diagnostics" | "scenario" | "scheduler" | "maintenance" | "evidence";
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<NavTab>("fleet");
@@ -71,6 +73,12 @@ export const App: React.FC = () => {
             <Sliders size={15} /> Scenario Lab
           </button>
           <button
+            className={`nav-tab ${activeTab === "scheduler" ? "active" : ""}`}
+            onClick={() => setActiveTab("scheduler")}
+          >
+            <Warehouse size={15} /> Depot Scheduler
+          </button>
+          <button
             className={`nav-tab ${activeTab === "maintenance" ? "active" : ""}`}
             onClick={() => setActiveTab("maintenance")}
           >
@@ -116,6 +124,8 @@ export const App: React.FC = () => {
             onNavigateToWorkOrders={handleNavigateToWorkOrders}
           />
         )}
+
+        {activeTab === "scheduler" && <FleetSchedulerView />}
 
         {activeTab === "maintenance" && (
           <MaintenanceConsoleView highlightOrderId={highlightOrderId} />
