@@ -45,7 +45,11 @@ class BaseAnomalyDetector(ABC):
 
     def calibrate_threshold(self, X_val_nominal: np.ndarray, target_far: float = DEFAULT_TARGET_FAR) -> float:
         """Calibrate detection threshold on held-out validation early-life data targeting FAR."""
+        if not 0 < target_far < 1 or len(X_val_nominal) == 0:
+            raise ValueError("Calibration needs nonempty independent reference data and FAR in (0,1)")
         scores = self.compute_raw_score(X_val_nominal)
+        if not np.isfinite(scores).all():
+            raise ValueError("Nonfinite calibration scores")
         self.target_far = target_far
         # (1 - target_far) percentile ensures approx target_far fraction exceed threshold on nominal data
         percentile = 100.0 * (1.0 - target_far)
@@ -59,7 +63,7 @@ class BaseAnomalyDetector(ABC):
 
 
 class StatisticalDeviationDetector(BaseAnomalyDetector):
-    """Baseline sensor deviation detector using robust normalized deviation (Z-score)."""
+    """Baseline sensor deviation detector using mean/std deviation (not robust or a probability)."""
 
     def __init__(self):
         super().__init__("Statistical_Deviation_ZScore")
@@ -137,27 +141,33 @@ class IsolationForestDetector(BaseAnomalyDetector):
 
 
 class PersistenceFilter:
-    """Maintains consecutive anomaly counters per engine to suppress transient noise."""
-
-    def __init__(self, persistence_length: int = 3):
+    """Cycle-aware run lengths. Same event cannot count twice; gaps reset runs."""
+    def __init__(self, persistence_length=3):
+        if persistence_length < 1:
+            raise ValueError("Persistence must be positive")
         self.persistence_length = persistence_length
-        self._consecutive_counts: Dict[int, int] = {}
+        self._consecutive_counts = {}
+        self._last = {}
+        self._flags = {}
 
-    def update(self, engine_id: int, is_anomalous: bool) -> int:
-        """Update consecutive counter for an engine and return the current persistence count."""
-        current = self._consecutive_counts.get(engine_id, 0)
-        if is_anomalous:
-            new_count = current + 1
-        else:
-            new_count = 0
-        self._consecutive_counts[engine_id] = new_count
-        return new_count
+    def update(self, engine_id, is_anomalous, cycle=None):
+        previous = self._last.get(engine_id)
+        cycle = cycle if cycle is not None else (previous or 0)+1
+        if previous is not None and cycle == previous:
+            if bool(is_anomalous) != self._flags[engine_id]:
+                raise ValueError("Conflicting anomaly flag at repeated cycle")
+            return self._consecutive_counts[engine_id]
+        if previous is not None and cycle < previous:
+            raise ValueError("Out-of-order persistence update")
+        current = self._consecutive_counts.get(engine_id,0) if previous is None or cycle == previous+1 else 0
+        self._consecutive_counts[engine_id] = current+1 if is_anomalous else 0
+        self._last[engine_id] = cycle
+        self._flags[engine_id] = bool(is_anomalous)
+        return self._consecutive_counts[engine_id]
 
-    def is_persistent(self, engine_id: int) -> bool:
-        """Check if engine has met or exceeded the persistence requirement."""
-        return self._consecutive_counts.get(engine_id, 0) >= self.persistence_length
+    def is_persistent(self, engine_id):
+        return self._consecutive_counts.get(engine_id,0) >= self.persistence_length
 
-    def reset_engine(self, engine_id: int):
-        if engine_id in self._consecutive_counts:
-            del self._consecutive_counts[engine_id]
-
+    def reset_engine(self, engine_id):
+        for state in (self._consecutive_counts,self._last,self._flags):
+            state.pop(engine_id,None)

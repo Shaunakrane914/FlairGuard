@@ -1,7 +1,6 @@
 """Cross-validation and uncertainty quantification for FlairGuard AI.
 
-Implements repeated engine-disjoint k-fold cross-validation to rigorously quantify
-model selection variance (mean +/- std) without data leakage.
+Implements single engine-disjoint k-fold cross-validation to describe fold variability (not predictive uncertainty).
 """
 from typing import Dict, List, Any
 import numpy as np
@@ -11,7 +10,7 @@ from flairguard.models import get_model_candidates, SEED, RUL_CAP
 from flairguard.metrics import regression_metrics
 
 
-def run_repeated_engine_kfold(
+def run_engine_kfold(
     train_df: pd.DataFrame,
     features: List[str],
     n_splits: int = 5,
@@ -45,7 +44,7 @@ def run_repeated_engine_kfold(
         rng = np.random.default_rng(seed + fold)
         val_snapshots = []
         for _, group in fold_val.groupby("engine_id", sort=True):
-            allowed = group[(group.cycle >= 20) & group.true_rul.between(5, RUL_CAP)]
+            allowed = group[group.cycle >= 20]
             if allowed.empty:
                 allowed = group
             idx = rng.choice(allowed.index.to_numpy(), size=min(3, len(allowed)), replace=False)
@@ -80,3 +79,6 @@ def run_repeated_engine_kfold(
         }
     return summary
 
+
+# Compatibility name only: one GroupKFold run, never repeated CV or interval calibration.
+run_repeated_engine_kfold = run_engine_kfold

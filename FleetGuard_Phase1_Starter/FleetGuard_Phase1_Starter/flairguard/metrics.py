@@ -22,8 +22,8 @@ def regression_metrics(y_true: Sequence[float], y_pred: Sequence[float]) -> Dict
     actual = np.asarray(y_true, dtype=float)
     predicted = np.asarray(y_pred, dtype=float)
     
-    if len(actual) == 0 or len(actual) != len(predicted):
-        raise ValueError("Expected equal non-empty arrays for evaluation")
+    if actual.ndim != 1 or actual.shape != predicted.shape or not actual.size:
+        raise ValueError("Expected equal non-empty one-dimensional arrays")
     if not np.isfinite(actual).all() or not np.isfinite(predicted).all():
         raise ValueError("Metrics require finite predictions and labels")
         
@@ -31,14 +31,15 @@ def regression_metrics(y_true: Sequence[float], y_pred: Sequence[float]) -> Dict
     # PHM08 asymmetric penalty:
     # Overly optimistic (delta > 0) is penalized with exp(delta / 10) - 1
     # Early prediction (delta < 0) is penalized with exp(-delta / 13) - 1
-    early_penalty = np.exp(np.minimum(-delta / 13.0, 50.0)) - 1.0
-    late_penalty = np.exp(np.minimum(delta / 10.0, 50.0)) - 1.0
-    phm08_score = np.where(delta < 0, early_penalty, late_penalty).sum()
+    exponent = np.where(delta < 0, -delta / 13.0, delta / 10.0)
+    with np.errstate(over="raise"):
+        phm08_score = np.expm1(exponent).sum()
     
     return {
         "n_snapshots": int(len(actual)),
-        "mae_cycles": round(float(mean_absolute_error(actual, predicted)), 4),
-        "rmse_cycles": round(float(np.sqrt(mean_squared_error(actual, predicted))), 4),
-        "phm08_score": round(float(phm08_score), 4),
+        "mae_cycles": float(mean_absolute_error(actual, predicted)),
+        "rmse_cycles": float(np.sqrt(mean_squared_error(actual, predicted))),
+        "phm08_score": float(phm08_score),
+        "phm08_mean": float(phm08_score / len(actual)),
     }
 
