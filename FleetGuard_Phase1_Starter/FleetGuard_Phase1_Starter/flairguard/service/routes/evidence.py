@@ -97,6 +97,33 @@ def get_verified_benchmarks():
                 source_artifact="artifacts/phase_b/fd002-v1-run002/selection.json",
             ))
 
+    # 3. Coverage Study FD003 & FD004 with Genuine MATLAB R2026b Execution
+    cov_path = ARTIFACTS_DIR / "coverage_study" / "run001" / "metrics.json"
+    if cov_path.is_file():
+        with open(cov_path, "r", encoding="utf-8") as f:
+            cov_metrics = json.load(f)
+        for m in cov_metrics:
+            if m.get("role") == "evaluation" and m.get("population") == "endpoint":
+                m_name = m.get("model", "")
+                ds = m.get("subset", "")
+                if m_name == "RegimeLightGBM":
+                    st = "Selected Winner (0% dangerous overestimation)"
+                elif m_name == "MatlabPCAAgeRidge":
+                    st = "MATLAB R2026b Classical HI Baseline (High Overestimate Risk)"
+                else:
+                    st = "Cross-Validation Comparator"
+                results.append(BenchmarkModelMetric(
+                    model_name=m_name,
+                    dataset=ds,
+                    split=f"Held-out evaluation endpoint ({m.get('available_engines', 0)} engines)",
+                    engine_count=int(m.get("available_engines", 0)),
+                    mae=round(float(m.get("mae_cycles", 0.0)), 2),
+                    rmse=round(float(m.get("rmse_cycles", 0.0)), 2),
+                    nasa_score=round(float(m.get("phm08_mean", 0.0)), 1),
+                    status=st,
+                    source_artifact="artifacts/coverage_study/run001/metrics.json",
+                ))
+
     return results
 
 

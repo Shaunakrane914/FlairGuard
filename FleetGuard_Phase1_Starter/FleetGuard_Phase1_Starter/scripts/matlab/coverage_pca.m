@@ -30,7 +30,11 @@ for subset = ["FD003", "FD004"]
         values = [heldout.engine_id,heldout.cycle,heldout.true_rul,raw,prediction];
         path = fullfile(folder,'MatlabPCAAgeRidge_'+role+'_predictions.csv');
         assert(~isfile(path), 'Refusing to overwrite evidence');
-        file = fopen(path,'x');
+        try
+            file = fopen(path,'x');
+        catch
+            file = -1;
+        end
         if file == -1
             % MATLAB fopen lacks exclusive-create mode on some releases. A
             % prior isfile guard and isolated run directory protect this path.
