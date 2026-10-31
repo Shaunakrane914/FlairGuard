@@ -30,3 +30,7 @@ Desktop.ini
 *.db-wal
 *.db-shm
 
+# Frontend build & packages
+frontend/node_modules/
+frontend/dist/
+

@@ -123,3 +123,32 @@ def get_fleet_summary(
         telemetry_fault_count=fault_count,
         active_model_id=active_model_id,
     )
+
+
+@router.get("/engines/{engine_id}/trajectory")
+def get_engine_trajectory(
+    engine_id: int,
+    dataset: str = Query("FD002", description="Dataset identifier (FD001 or FD002)"),
+    split: str = Query("test", description="Data split (train or test)"),
+    limit: int = Query(150, ge=1, le=500),
+):
+    """Retrieve raw NASA sensor trajectory records for an individual turbofan engine."""
+    ds = dataset.upper()
+    try:
+        train_df, test_df, _ = load_subset(settings.data_dir, ds)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to read dataset: {str(e)}")
+        
+    target_df = train_df if split == "train" else test_df
+    eng_df = target_df[target_df.engine_id == engine_id].sort_values("cycle").head(limit)
+    if eng_df.empty:
+        raise HTTPException(status_code=404, detail=f"Engine {engine_id} not found in {ds} {split} set")
+        
+    records = eng_df.to_dict(orient="records")
+    return {
+        "engine_id": engine_id,
+        "dataset": ds,
+        "split": split,
+        "total_cycles": len(records),
+        "trajectory": records
+    }

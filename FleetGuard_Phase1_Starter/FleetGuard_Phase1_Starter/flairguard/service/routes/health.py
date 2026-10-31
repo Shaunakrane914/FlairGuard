@@ -28,3 +28,4 @@ def check_health():
         database_connected=db_ok,
         models_loaded=models_loaded,
     )
+

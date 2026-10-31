@@ -193,3 +193,11 @@ def test_restart_recovery(client):
     assert orders[0]["engine_id"] == 99
     assert orders[0]["severity"] == "HIGH"
     assert orders[0]["predicted_rul"] == 28.5
+
+
+def test_frontend_static_serving(client):
+    """Verify built React frontend is delivered at root URL."""
+    res = client.get("/")
+    assert res.status_code == 200
+    assert "FlairGuard AI" in res.text
+    assert "root" in res.text

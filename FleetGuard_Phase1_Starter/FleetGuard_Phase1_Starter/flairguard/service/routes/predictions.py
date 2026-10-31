@@ -113,3 +113,4 @@ def serve_prediction(req: PredictRequest):
         recommended_severity=proposal.severity,
         decision_reason=proposal.reason,
     )
+

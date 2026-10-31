@@ -1,8 +1,10 @@
 """Main FastAPI application factory for FlairGuard AI Platform."""
+from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from .config import settings
 from .models_registry import model_registry
 from .routes import health, fleet, predictions, replay, orders, mlops
@@ -41,6 +43,11 @@ def create_app() -> FastAPI:
     app.include_router(orders.router)
     app.include_router(mlops.router)
 
+    # Static frontend hosting if built
+    dist_path = Path(__file__).resolve().parents[4] / "frontend" / "dist"
+    if dist_path.is_dir():
+        app.mount("/", StaticFiles(directory=str(dist_path), html=True), name="frontend")
+
     # Custom global exception handler
     @app.exception_handler(Exception)
     async def global_exception_handler(request: Request, exc: Exception):
@@ -57,3 +64,4 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
+

@@ -166,3 +166,4 @@ class ModelMetadataResponse(BaseModel):
     target_cap: int
     metrics: Dict[str, float]
     provenance: Dict[str, Any]
+
