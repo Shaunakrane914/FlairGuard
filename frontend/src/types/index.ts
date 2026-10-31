@@ -44,6 +44,8 @@ export interface QualityDetails {
 export interface TelemetryEvidence {
   cycle: number;
   telemetry: Record<string, number>;
+  raw_telemetry?: Record<string, number>;
+  is_perturbed?: boolean;
   prediction: number | null;
   usable: boolean;
   anomaly_score: number | null;

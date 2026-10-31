@@ -24,3 +24,4 @@ pytest-rerunfailures>=14.0
 # Presentation & Reporting
 python-pptx>=1.0.0
 pymupdf>=1.24.0
+

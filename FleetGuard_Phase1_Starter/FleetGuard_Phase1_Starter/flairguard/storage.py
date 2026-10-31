@@ -64,6 +64,32 @@ class WorkOrderStore:
         CREATE TABLE IF NOT EXISTS contexts(namespace TEXT PRIMARY KEY,context_json TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS asset_state(namespace TEXT,asset_id TEXT,last_cycle INTEGER NOT NULL,
             checkpoint_json TEXT NOT NULL,PRIMARY KEY(namespace,asset_id));
+        CREATE TABLE IF NOT EXISTS replay_sessions(
+            session_id TEXT PRIMARY KEY,
+            dataset TEXT NOT NULL,
+            engine_id INTEGER NOT NULL,
+            split TEXT NOT NULL,
+            policy_name TEXT NOT NULL,
+            namespace TEXT NOT NULL,
+            current_cycle INTEGER NOT NULL,
+            total_cycles INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            config_json TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS training_jobs(
+            job_id TEXT PRIMARY KEY,
+            dataset TEXT NOT NULL,
+            challenger_algorithm TEXT NOT NULL,
+            status TEXT NOT NULL,
+            gate_passed INTEGER NOT NULL,
+            promoted INTEGER NOT NULL,
+            previous_rmse REAL,
+            new_rmse REAL,
+            improvement_pct REAL,
+            details_json TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            completed_at TEXT);
         CREATE TABLE IF NOT EXISTS decision_events(
             event_id TEXT PRIMARY KEY,namespace TEXT NOT NULL,asset_id TEXT NOT NULL,engine_id INTEGER NOT NULL,
             cycle INTEGER NOT NULL,input_hash TEXT NOT NULL,telemetry_json TEXT NOT NULL,
@@ -329,3 +355,56 @@ class WorkOrderStore:
             if engine_id is not None:
                 sql+=' AND engine_id=?';args.append(engine_id)
             return [dict(r) for r in c.execute(sql+' ORDER BY log_id',args)]
+
+    def save_replay_session(self, session_id, dataset, engine_id, split, policy_name, namespace, current_cycle, total_cycles, status, config):
+        now = datetime.now(timezone.utc).isoformat()
+        with self._get_connection(True) as c:
+            c.execute("""INSERT INTO replay_sessions(session_id, dataset, engine_id, split, policy_name, namespace, current_cycle, total_cycles, status, config_json, created_at, updated_at)
+                         VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+                         ON CONFLICT(session_id) DO UPDATE SET
+                         current_cycle=excluded.current_cycle,
+                         status=excluded.status,
+                         namespace=excluded.namespace,
+                         config_json=excluded.config_json,
+                         updated_at=excluded.updated_at""",
+                      (session_id, dataset, engine_id, split, policy_name, namespace, current_cycle, total_cycles, status, canonical(config), now, now))
+
+    def get_replay_session(self, session_id):
+        with self._get_connection() as c:
+            row = c.execute("SELECT * FROM replay_sessions WHERE session_id=?", (session_id,)).fetchone()
+            return dict(row) if row else None
+
+    def update_replay_session_cycle(self, session_id, current_cycle, status="ACTIVE", namespace=None):
+        now = datetime.now(timezone.utc).isoformat()
+        with self._get_connection(True) as c:
+            if namespace:
+                c.execute("UPDATE replay_sessions SET current_cycle=?, status=?, namespace=?, updated_at=? WHERE session_id=?",
+                          (current_cycle, status, namespace, now, session_id))
+            else:
+                c.execute("UPDATE replay_sessions SET current_cycle=?, status=?, updated_at=? WHERE session_id=?",
+                          (current_cycle, status, now, session_id))
+
+    def save_training_job(self, job_id, dataset, challenger_algorithm, status, gate_passed, promoted, previous_rmse, new_rmse, improvement_pct, details, completed=False):
+        now = datetime.now(timezone.utc).isoformat()
+        with self._get_connection(True) as c:
+            c.execute("""INSERT INTO training_jobs(job_id, dataset, challenger_algorithm, status, gate_passed, promoted, previous_rmse, new_rmse, improvement_pct, details_json, created_at, completed_at)
+                         VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+                         ON CONFLICT(job_id) DO UPDATE SET
+                         status=excluded.status,
+                         gate_passed=excluded.gate_passed,
+                         promoted=excluded.promoted,
+                         previous_rmse=excluded.previous_rmse,
+                         new_rmse=excluded.new_rmse,
+                         improvement_pct=excluded.improvement_pct,
+                         details_json=excluded.details_json,
+                         completed_at=excluded.completed_at""",
+                      (job_id, dataset, challenger_algorithm, status, int(gate_passed), int(promoted), previous_rmse, new_rmse, improvement_pct, canonical(details), now, now if completed else None))
+
+    def get_training_job(self, job_id):
+        with self._get_connection() as c:
+            row = c.execute("SELECT * FROM training_jobs WHERE job_id=?", (job_id,)).fetchone()
+            return dict(row) if row else None
+
+    def list_training_jobs(self, limit=50):
+        with self._get_connection() as c:
+            return [dict(r) for r in c.execute("SELECT * FROM training_jobs ORDER BY created_at DESC LIMIT ?", (limit,))]

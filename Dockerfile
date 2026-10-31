@@ -25,16 +25,19 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy Python codebase, models, and data
+# Copy Python codebase, models, and NASA data
 COPY FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/ /app/
+
+# Create separate dedicated storage directory for mutable SQLite databases
+RUN mkdir -p /app/storage /app/mlruns
 
 # Copy built frontend assets into the directory expected by FastAPI static mount
 COPY --from=frontend-builder /app/dist /app/frontend/dist
 
-# Set operational environment variables
+# Set operational environment variables (points DB to dedicated storage dir to prevent volume masking)
 ENV PYTHONPATH=/app \
     PYTHONUNBUFFERED=1 \
-    FLAIRGUARD_DB_PATH=/app/data/flairguard_platform.db \
+    FLAIRGUARD_DB_PATH=/app/storage/flairguard_platform.db \
     FLAIRGUARD_DATA_DIR=/app/data/raw
 
 # Expose HTTP port for API and Dashboard

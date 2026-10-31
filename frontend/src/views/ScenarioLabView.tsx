@@ -501,6 +501,7 @@ export const ScenarioLabView: React.FC<Props> = ({
             <thead>
               <tr>
                 <th>Cycle</th>
+                <th>Telemetry Source</th>
                 <th>Usable</th>
                 <th>Predicted RUL</th>
                 <th>Anomaly Score</th>
@@ -513,7 +514,7 @@ export const ScenarioLabView: React.FC<Props> = ({
             <tbody>
               {historyTrace.length === 0 ? (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: "center", color: "var(--text-muted)", padding: "2rem" }}>
+                  <td colSpan={9} style={{ textAlign: "center", color: "var(--text-muted)", padding: "2rem" }}>
                     Simulation not started. Click "+1 Cycle" or "Auto-Play" above.
                   </td>
                 </tr>
@@ -522,6 +523,11 @@ export const ScenarioLabView: React.FC<Props> = ({
                   <tr key={ev.cycle}>
                     <td className="font-mono">
                       <strong>Cycle {ev.cycle}</strong>
+                    </td>
+                    <td>
+                      <span className={`badge ${ev.is_perturbed ? "badge-warning" : "badge-blue"}`}>
+                        {ev.is_perturbed ? "SYNTHETIC FAULT" : "NASA RAW"}
+                      </span>
                     </td>
                     <td>
                       <span className={`badge ${ev.usable ? "badge-nominal" : "badge-critical"}`}>

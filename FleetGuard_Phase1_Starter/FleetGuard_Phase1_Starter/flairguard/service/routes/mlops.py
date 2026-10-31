@@ -1,12 +1,19 @@
-"""MLOps lifecycle, model provenance, and automated retraining endpoints."""
-from typing import List, Optional
-from pathlib import Path
-from fastapi import APIRouter, HTTPException, Body
+"""MLOps lifecycle, model provenance, genuine retraining, and rollback endpoints."""
+from typing import List, Dict, Any, Optional
+from fastapi import APIRouter, HTTPException, Body, Query
+from pydantic import BaseModel
+
 from flairguard.service.schemas import ModelMetadataResponse, RetrainRequest, RetrainResponse
 from flairguard.service.models_registry import model_registry
+from flairguard.mlops.pipeline import retraining_engine
+from flairguard.storage import WorkOrderStore
 from flairguard.service.config import settings
 
 router = APIRouter(prefix="/api/v1/models", tags=["MLOps & Lifecycle"])
+
+
+class RollbackRequest(BaseModel):
+    dataset: str = "FD002"
 
 
 @router.get("", response_model=List[ModelMetadataResponse])
@@ -30,74 +37,55 @@ def list_models():
 
 @router.post("/retrain", response_model=RetrainResponse)
 def trigger_retraining(req: RetrainRequest = Body(...)):
-    """Simulate arrival of newly completed labeled engine trajectories and run challenger evaluation.
+    """Simulate arrival of newly completed labeled engine trajectories and run real challenger training.
     
-    Logs the experiment, hyper-parameters, and promotion gate metrics to MLflow.
+    Fits actual scikit-learn / LightGBM models on newly available labeled data,
+    evaluates on held-out validation engines, logs real metrics to MLflow, and
+    performs atomic serving promotion only if the evaluation hurdle is passed.
     """
-    ds = req.dataset.upper()
-    if ds not in ("FD001", "FD002"):
-        raise HTTPException(status_code=400, detail=f"Unsupported retraining dataset {req.dataset}")
-        
-    challenger_name = req.challenger_model
-    batch_size = req.reveal_batch_size
-    challenger_id = f"{ds.lower()}-{challenger_name.lower()}-batch{batch_size}"
-    
-    # Established champion validation baselines
-    baseline_rmse = 17.42 if ds == "FD001" else 48.88
-    
-    # Challenger model evaluation logic
-    # Challenger must beat champion RMSE by > 0.0 cycles to pass the gate
-    if challenger_name == "LightGBM_Optuna" and ds == "FD001":
-        new_rmse = 16.95  # 2.7% improvement
-    elif challenger_name == "LightGBM_Optuna" and ds == "FD002":
-        new_rmse = 47.65  # 2.5% improvement
-    elif challenger_name == "RegimeRandomForest":
-        new_rmse = 52.10  # Inferior to champion
-    else:
-        new_rmse = 49.30  # Regression
-        
-    improvement_pct = ((baseline_rmse - new_rmse) / baseline_rmse) * 100.0
-    gate_passed = improvement_pct > 2.0
-    
-    if gate_passed:
-        message = f"Promotion Gate PASSED: Challenger {challenger_name} achieved {improvement_pct:.2f}% RMSE reduction."
-    else:
-        message = f"Promotion Gate REJECTED: Challenger {challenger_name} ({new_rmse:.2f}) failed to beat champion threshold (>2.0%). Champion retained."
-        
-    # MLflow Tracking Logging
-    mlflow_run_id = None
-    experiment_name = f"flairguard_{ds.lower()}_lifecycle"
     try:
-        import mlflow
-        tracking_dir = Path(settings.data_dir).parent / "mlruns"
-        tracking_dir.mkdir(parents=True, exist_ok=True)
-        mlflow.set_tracking_uri(f"file:///{str(tracking_dir.resolve()).replace('\\', '/')}")
-        mlflow.set_experiment(experiment_name)
-        
-        with mlflow.start_run(run_name=challenger_id) as run:
-            mlflow.log_param("dataset", ds)
-            mlflow.log_param("challenger_model", challenger_name)
-            mlflow.log_param("reveal_batch_size", batch_size)
-            mlflow.log_param("promotion_gate_passed", gate_passed)
-            mlflow.log_metric("baseline_rmse", baseline_rmse)
-            mlflow.log_metric("challenger_rmse", new_rmse)
-            mlflow.log_metric("improvement_pct", improvement_pct)
-            mlflow.set_tag("disposition", "PROMOTED" if gate_passed else "REJECTED")
-            mlflow.set_tag("evaluator_boundary", "strict_held_out_validation")
-            mlflow_run_id = run.info.run_id
+        # Hurdle: require >= 2.0% improvement for promotion
+        result = retraining_engine.run_training_job(
+            dataset=req.dataset,
+            challenger_algorithm=req.challenger_model,
+            reveal_batch_size=req.reveal_batch_size,
+            hurdle_pct=2.0,
+        )
+        return RetrainResponse(
+            candidate_model=result["challenger_algorithm"],
+            dataset=result["dataset"],
+            previous_rmse=round(result["previous_rmse"], 2),
+            new_rmse=round(result["new_rmse"], 2),
+            improvement_pct=round(result["improvement_pct"], 2),
+            gate_passed=result["gate_passed"],
+            promoted_to_champion=result["promoted_to_champion"],
+            message=result["message"],
+            mlflow_run_id=result.get("mlflow_run_id"),
+            mlflow_experiment_name=result.get("mlflow_experiment_name"),
+        )
     except Exception as e:
-        # Fallback gracefully if MLflow file lock occurs in sandboxed test
-        pass
+        raise HTTPException(status_code=500, detail=f"Retraining failed: {str(e)}")
 
-    return RetrainResponse(
-        candidate_model=challenger_id,
-        dataset=ds,
-        previous_rmse=baseline_rmse,
-        new_rmse=new_rmse,
-        improvement_pct=improvement_pct,
-        gate_passed=gate_passed,
-        promoted_to_champion=gate_passed,
-        message=message,
-        mlflow_run_id=mlflow_run_id,
-        mlflow_experiment_name=experiment_name,
-    )
+
+@router.post("/rollback")
+def rollback_model(req: RollbackRequest = Body(...)):
+    """Roll back active serving model to the previous champion version."""
+    ds = req.dataset.upper()
+    try:
+        outcome = model_registry.rollback_champion(ds)
+        return {
+            "status": "SUCCESS",
+            "message": f"Successfully rolled back {ds} serving model to previous champion: {outcome['active_model_id']}",
+            "rollback_details": outcome,
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/jobs")
+def list_training_jobs(limit: int = Query(20, ge=1, le=100)):
+    """List historical training jobs and promotion audit records from SQLite."""
+    store = WorkOrderStore(settings.db_path, namespace="mlops_system")
+    return store.list_training_jobs(limit=limit)

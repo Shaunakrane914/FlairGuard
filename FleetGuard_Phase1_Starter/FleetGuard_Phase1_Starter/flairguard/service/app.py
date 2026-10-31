@@ -1,5 +1,6 @@
 """Main FastAPI application factory for FlairGuard AI Platform."""
 from pathlib import Path
+import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,7 +8,9 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from .config import settings
 from .models_registry import model_registry
-from .routes import health, fleet, predictions, replay, orders, mlops
+from .routes import health, fleet, predictions, replay, orders, mlops, evidence
+
+logger = logging.getLogger("flairguard.service")
 
 
 @asynccontextmanager
@@ -26,12 +29,12 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    # CORS configuration
+    # CORS configuration - strict trusted localhost development & deployment origins
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
         allow_credentials=True,
-        allow_methods=["*"],
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["*"],
     )
 
@@ -42,6 +45,7 @@ def create_app() -> FastAPI:
     app.include_router(replay.router)
     app.include_router(orders.router)
     app.include_router(mlops.router)
+    app.include_router(evidence.router)
 
     # Static frontend hosting if built (searches both container and local paths)
     candidate_paths = [
@@ -54,14 +58,15 @@ def create_app() -> FastAPI:
     if dist_path:
         app.mount("/", StaticFiles(directory=str(dist_path), html=True), name="frontend")
 
-    # Custom global exception handler
+    # Sanitized global exception handler preventing information leakage
     @app.exception_handler(Exception)
     async def global_exception_handler(request: Request, exc: Exception):
+        logger.error("Unhandled service exception at %s: %s", request.url.path, exc, exc_info=True)
         return JSONResponse(
             status_code=500,
             content={
                 "error": "InternalServerError",
-                "message": str(exc),
+                "message": "An internal service error occurred. The incident has been recorded in the platform audit log.",
                 "path": request.url.path,
             }
         )
@@ -70,4 +75,3 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-

@@ -148,9 +148,54 @@ export const api = {
 
   // MLOps
   getModels: () => request<ModelListing[]>("/models"),
-  retrainModel: (dataset: string = "FD002", challenger: string = "LightGBM_Optuna") =>
+  retrainModel: (dataset: string = "FD002", challenger: string = "LightGBM") =>
     request<RetrainResult>("/models/retrain", {
       method: "POST",
-      body: JSON.stringify({ dataset, challenger_model: challenger }),
+      body: JSON.stringify({ dataset, challenger_model: challenger, reveal_batch_size: 15 }),
     }),
+  rollbackModel: (dataset: string) =>
+    request<{ status: string; message: string; rollback_details: any }>("/models/rollback", {
+      method: "POST",
+      body: JSON.stringify({ dataset }),
+    }),
+  getTrainingJobs: (limit: number = 20) =>
+    request<any[]>(`/models/jobs?limit=${limit}`),
+
+  // Scientific Evidence (Artifact-backed)
+  getEvidenceBenchmarks: () =>
+    request<Array<{
+      model_name: string;
+      dataset: string;
+      split: string;
+      engine_count: number;
+      mae: number;
+      rmse: number;
+      nasa_score?: number;
+      status: string;
+      source_artifact: string;
+    }>>("/evidence/benchmarks"),
+
+  getEvidencePolicies: () =>
+    request<Array<{
+      dataset: string;
+      policy: string;
+      policy_kind: string;
+      mean_cost_per_engine: number;
+      failure_rate_pct: number;
+      inspection_rate_pct: number;
+      mean_wasted_cycles: number;
+      scientific_finding: string;
+      governance_status: string;
+    }>>("/evidence/policies"),
+
+  getEvidenceProvenance: () =>
+    request<Array<{
+      dataset: string;
+      run_id: string;
+      protocol_hash: string;
+      data_sha256: string;
+      bundle_sha256: string;
+      selected_model: string;
+      independent_evaluator_verified: boolean;
+    }>>("/evidence/provenance"),
 };
