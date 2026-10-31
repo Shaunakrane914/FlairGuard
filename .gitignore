@@ -25,3 +25,8 @@ ehthumbs.db
 Desktop.ini
 .DS_Store
 
+# Local runtime databases
+**/flairguard_platform.db
+*.db-wal
+*.db-shm
+

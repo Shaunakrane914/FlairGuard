@@ -285,6 +285,27 @@ class WorkOrderStore:
             c.execute(f"UPDATE work_orders SET status='CANCELLED',row_version=row_version+1 WHERE namespace=? AND asset_id=? AND status IN {ACTIVE}",(self.namespace,asset))
             self._audit(c,engine_id,cycle,'FAILURE_RECORDED',None,None,'Evaluator-owned historical failure boundary')
 
+    def transition_work_order(self, work_order_id, target_status, reason='Operator workflow transition'):
+        valid_transitions = {
+            'OPEN': ['ACKNOWLEDGED', 'CANCELLED'],
+            'ACKNOWLEDGED': ['IN_PROGRESS', 'CANCELLED'],
+            'IN_PROGRESS': ['CLOSED', 'CANCELLED'],
+            'CLOSED': [],
+            'CANCELLED': []
+        }
+        with self._get_connection(True) as c:
+            row = c.execute("SELECT * FROM work_orders WHERE namespace=? AND work_order_id=?", (self.namespace, work_order_id)).fetchone()
+            if not row:
+                raise ValueError(f"Work order {work_order_id} not found")
+            current = row['status']
+            if target_status not in valid_transitions.get(current, []):
+                raise ValueError(f"Invalid transition from {current} to {target_status}")
+            c.execute("UPDATE work_orders SET status=?, row_version=row_version+1, updated_at=? WHERE work_order_id=?",
+                      (target_status, datetime.now(timezone.utc).isoformat(), work_order_id))
+            self._audit(c, row['engine_id'], row['cycle'], 'STATUS_CHANGED', work_order_id, row['event_id'], f"Status transitioned {current} -> {target_status}: {reason}")
+            updated = c.execute("SELECT * FROM work_orders WHERE work_order_id=?", (work_order_id,)).fetchone()
+            return dict(updated)
+
     def close_work_order(self, work_order_id, reason='Human workflow closure; no simulated service implied'):
         with self._get_connection(True) as c:
             row=c.execute("SELECT * FROM work_orders WHERE namespace=? AND work_order_id=?",(self.namespace,work_order_id)).fetchone()
