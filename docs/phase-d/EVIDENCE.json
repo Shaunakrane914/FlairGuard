@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "source_commit": "5b1917404ce3b30bb6e9cd6e83720f2d0bc229bd",
+  "source_commits": [
+    "6a98fce",
+    "a6503e3",
+    "5b19174"
+  ],
+  "evidence_files_indexed": 3204,
+  "historical_files_preserved": 760,
+  "files": {
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/release-v1/manifest.json": {
+      "sha256": "c7981de5879de9b6f1285c11cfccb461802567b356754a86cc0168d04bbbe9ab",
+      "bytes": 1895
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/release-v1/source_hashes.json": {
+      "sha256": "35eb15091fc59458ac446bfb4504874240611acacfc860b93d70e38ce83645ad",
+      "bytes": 17983
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/release-v1/evidence_index.json": {
+      "sha256": "adb3ea5bda08a5a3ef83d5a54b403c99db3e9b5a966868858671732f0e8baa77",
+      "bytes": 482562
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/reliability-v1-run002/manifest.json": {
+      "sha256": "1ea3f872ea6f0477fd4991c8a02d2f31732a94c624cac699f65fc0bf52078b32",
+      "bytes": 61847
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/fleet-bootstrap-v1-run001/manifest.json": {
+      "sha256": "9383ceb19966d7f3141b5de833ce589e602489ac05ba6bb7a3d51f503ea53406",
+      "bytes": 196747
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/diagnostics-v1-run001/manifest.json": {
+      "sha256": "b497317eb0b6249f1230fc4e2b150a100712ba34ff32ef657b68cb557ef0d50d",
+      "bytes": 5685
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/matlab-similarity-v1-run001/manifest.json": {
+      "sha256": "379cbe793a0130d8bbcb0d21b24d78069a05cad8adcc2cd3d597626bfd9541ab",
+      "bytes": 1428
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/runtime-payload-v1/payload-manifest.json": {
+      "sha256": "6e9c0398ca269dac2823134199505cbfd006632ef9465213a5b582ca1e0f10e0",
+      "bytes": 98809
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/verification-v1/independent_recheck.json": {
+      "sha256": "96aaf6cac706444bf9d31313c016e3b87fa816c933737ad591207db706e02832",
+      "bytes": 595
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/verification-v1/supplements.json": {
+      "sha256": "644611bc911c729ba636e7e3142517f10634ceb3321f1f0547125d878b48f280",
+      "bytes": 214
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/software-final-v1/tests.xml": {
+      "sha256": "8902cb09ff96867ac9c4905ad8a7c1cfca2bf4cb50584468821633b337f4b0c5",
+      "bytes": 20635
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/browser-release-v3/workflow-evidence.json": {
+      "sha256": "df424f20fdb4e0de88267f2ff200e77be652f0be8ac60b0f3ac942b313faf5dc",
+      "bytes": 5455
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/browser-release-v3/playwright-report.json": {
+      "sha256": "d4b95ccb20b8e1fca47ff490e91edd9662b00e3acde06f56daaefe66e766d953",
+      "bytes": 5109
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/process-release-v3/runtime_report.json": {
+      "sha256": "fd790c73e43466699308966c2d1e05c8bdf67b5612b34eaec4af6f7fcaa84810",
+      "bytes": 4394
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/docker-release-v3/runtime_report.json": {
+      "sha256": "2aaac271f850778f4b760a32ef3b6ccc7c092075bcbf22c421b59ad037b1c165",
+      "bytes": 4619
+    },
+    "FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/artifacts/phase_d/docker-release-v3/image-inspect.json": {
+      "sha256": "047415ddc58e67074e5da07028675e796fc08f3bf2f718e9d9e2238fab1f6a16",
+      "bytes": 3632
+    }
+  },
+  "large_outputs": "Saved locally in isolated ignored directories; require verified artifact provisioning for a new checkout"
+}

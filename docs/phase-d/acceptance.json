@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "phase": "D",
+  "branch": "fix/scientific-operational-integrity",
+  "source_commit": "5b1917404ce3b30bb6e9cd6e83720f2d0bc229bd",
+  "checkpoint": "326829629bf7957d69c20d2e9ff85e3b513cb89e",
+  "engineering_status": "PASS",
+  "scope": "Retrospective/developmental, hypothetical maintenance; no industrial field confirmation",
+  "gates": {
+    "D1": {
+      "status": "PASS",
+      "outcome": "Full-life engine-disjoint predictions verified",
+      "evidence": "artifacts/phase_d/verification-v1/independent_recheck.json"
+    },
+    "D2": {
+      "status": "PASS",
+      "outcome": "No evaluator labels in operational decisions",
+      "evidence": "artifacts/phase_d/software-final-v1/tests.xml"
+    },
+    "D3": {
+      "status": "PASS",
+      "outcome": "Independent fleet cost reconstruction",
+      "evidence": "artifacts/phase_d/verification-v1/supplements.json"
+    },
+    "D4": {
+      "status": "PASS",
+      "outcome": "Trust/risk estimator evaluated against tuned baseline; no general advantage earned",
+      "evidence": "artifacts/phase_d/reliability-v1-run002/paired_engine_results.json"
+    },
+    "D5": {
+      "status": "PASS",
+      "outcome": "Six missing-telemetry strategies compared in eight conditions",
+      "evidence": "artifacts/phase_d/reliability-v1-run002/availability.csv"
+    },
+    "D6": {
+      "status": "PASS",
+      "outcome": "Costs and safety tradeoffs reported with dependence limits",
+      "evidence": "artifacts/phase_d/fleet-bootstrap-v1-run001/summary.json"
+    },
+    "D7": {
+      "status": "PASS",
+      "outcome": "Scheduler capacity and execution invariants pass",
+      "evidence": "artifacts/phase_d/verification-v1/independent_recheck.json"
+    },
+    "D8": {
+      "status": "PASS",
+      "outcome": "Actual Chromium end-to-end workflow executed",
+      "evidence": "artifacts/phase_d/browser-release-v3/workflow-evidence.json"
+    },
+    "D9": {
+      "status": "PASS",
+      "outcome": "Genuine retraining and blocked scientific promotion preserved",
+      "evidence": "artifacts/phase_d/process-release-v3/runtime_report.json"
+    },
+    "D10": {
+      "status": "PASS",
+      "outcome": "Local and Docker restart recovery verified",
+      "evidence": "artifacts/phase_d/docker-release-v3/runtime_report.json"
+    },
+    "D11": {
+      "status": "PASS",
+      "outcome": "FD003/FD004 research findings retained; active serving false",
+      "evidence": "artifacts/phase_d/reliability-v1-run002/fd004_danger_diagnostic.json"
+    },
+    "D12": {
+      "status": "PASS",
+      "outcome": "All 760 historical artifact hashes unchanged; prior negatives retained",
+      "evidence": "artifacts/phase_d/baseline-v1/historical_hashes.json"
+    }
+  },
+  "scientific_superiority": {
+    "status": "FAIL",
+    "reason": "No general risk/lookahead superiority established; retain simpler policy"
+  },
+  "scientific_promotion": {
+    "status": "BLOCKED",
+    "reason": "No fresh labeled acceptance cohort"
+  },
+  "remote_ci": {
+    "status": "NOT RUN"
+  },
+  "external_cloud_deployment": {
+    "status": "NOT RUN"
+  },
+  "industrial_field_validation": {
+    "status": "NOT RUN"
+  },
+  "regression_tests": 114,
+  "distinct_primary_engines": 169,
+  "primary_policy_runs": 332,
+  "primary_engine_episodes": 17822,
+  "supplemental_policy_runs": 1644,
+  "supplemental_engine_episodes": 81060,
+  "historical_files_verified": 760,
+  "research_manifest_sha256": "1ea3f872ea6f0477fd4991c8a02d2f31732a94c624cac699f65fc0bf52078b32",
+  "docker_image_id": "sha256:22e02d9c1776be52f118278496b425a20749e40f6b5f92849072560e7131e27a",
+  "limits": [
+    "Repeated scenarios/draws are not new independent engines",
+    "Fixed-ledger engine ranges are conditional sensitivities, not new-fleet confidence intervals",
+    "Resource-aware pilot has 100 empirical draws and two telemetry conditions only",
+    "Masked predictor compares complete model/recovery methods, not isolated imputation effects",
+    "Benchmark ledger is durable at sealing; live API restart claims come from separate runtime tests",
+    "No real repair-response trajectories; clocks age through hypothetical service",
+    "FD003/FD004 browsing/research only; scientific champions unchanged"
+  ]
+}
