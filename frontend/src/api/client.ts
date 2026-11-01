@@ -104,7 +104,7 @@ export const api = {
       magnitude: number;
     }
   ) =>
-    request<{ message: string; active_fault: any }>(`/replay/${sessionId}/inject-fault`, {
+    request<{ status: string; injected_fault: any }>(`/replay/${sessionId}/inject-fault`, {
       method: "POST",
       body: JSON.stringify(fault),
     }),
@@ -113,6 +113,11 @@ export const api = {
     request<ReplayState>(`/replay/${sessionId}/reset`, {
       method: "POST",
     }),
+
+  getReplay: (sessionId: string) => request<ReplayState>(`/replay/${sessionId}`),
+  exportReplay: (sessionId: string) => request<any>(`/replay/${sessionId}/export`),
+  getModelHistory: () => request<any[]>("/models/history"),
+  getReliability: () => request<any>("/reliability/summary"),
 
   // Work Orders & Maintenance
   getWorkOrders: (status?: string, namespace?: string) => {

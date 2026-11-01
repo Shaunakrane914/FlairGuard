@@ -27,7 +27,7 @@ import {
 interface Props {
   initialDataset?: string;
   initialEngineId?: number;
-  onNavigateToWorkOrders: (workOrderId?: string) => void;
+  onNavigateToWorkOrders: (workOrderId?: string, namespace?: string) => void;
 }
 
 export const ScenarioLabView: React.FC<Props> = ({
@@ -44,6 +44,9 @@ export const ScenarioLabView: React.FC<Props> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [sessionError, setSessionError] = useState<string | null>(null);
+  const [sessionNamespace, setSessionNamespace] = useState<string>("default");
+
   // Fault Injection Configuration
   const [faultType, setFaultType] = useState<string>("stuck_sensor");
   const [faultChannel, setFaultChannel] = useState<string>("sensor_11");
@@ -52,28 +55,40 @@ export const ScenarioLabView: React.FC<Props> = ({
   const [faultMagnitude, setFaultMagnitude] = useState<number>(1.0);
   const [faultNotice, setFaultNotice] = useState<string | null>(null);
 
+  const generationRef = useRef(0);
+  const advancingRef = useRef(false);
   const playTimerRef = useRef<number | null>(null);
 
   // Start new isolated replay session
   const startSession = async () => {
+    const generation=++generationRef.current;
+    setReplayState(null);
     setLoading(true);
     setIsPlaying(false);
     if (playTimerRef.current) clearInterval(playTimerRef.current);
 
     try {
-      const state = await api.startReplay({
-        dataset,
-        engine_id: engineId,
-        split: "test",
-        policy,
-      });
+      setSessionError(null);
+      const cacheKey = `flairguard_replay_${dataset}_${engineId}_${policy}`;
+      const saved = sessionStorage.getItem(cacheKey);
+      let state: ReplayState;
+      if (saved) {
+        try { state = await api.getReplay(saved); }
+        catch { sessionStorage.removeItem(cacheKey); state = await api.startReplay({dataset, engine_id:engineId, split:"test", policy}); }
+      } else {state = await api.startReplay({dataset,engine_id:engineId,split:"test",policy});}
+      sessionStorage.setItem(cacheKey,state.session_id);
+      const exported = await api.exportReplay(state.session_id);
+      if(generation!==generationRef.current)return;
+      setSessionNamespace(exported.namespace);
+      sessionStorage.setItem("flairguard_namespace",exported.namespace);
+      setHistoryTrace(exported.events.map((e:any) => ({cycle:e.cycle,prediction:e.prediction.prediction,
+        usable:e.prediction.usable,anomaly_score:e.prediction.anomaly_score})));
       setReplayState(state);
-      setHistoryTrace([]);
       setFaultNotice(null);
     } catch (err: any) {
-      alert("Failed to initialize replay session: " + err.message);
+      setSessionError("Replay unavailable: " + err.message);
     } finally {
-      setLoading(false);
+      if(generation===generationRef.current)setLoading(false);
     }
   };
 
@@ -86,7 +101,8 @@ export const ScenarioLabView: React.FC<Props> = ({
 
   // Step simulation forward
   const stepSession = async (stepCount: number) => {
-    if (!replayState) return;
+    if (!replayState || advancingRef.current) return;
+    advancingRef.current = true;
     try {
       const updated = await api.stepReplay(replayState.session_id, stepCount);
       setReplayState(updated);
@@ -97,9 +113,9 @@ export const ScenarioLabView: React.FC<Props> = ({
         setIsPlaying(false);
       }
     } catch (err: any) {
-      console.error("Step failed:", err);
+      setSessionError("Step failed: " + err.message);
       setIsPlaying(false);
-    }
+    } finally { advancingRef.current = false; }
   };
 
   // Play / Pause loop
@@ -132,9 +148,9 @@ export const ScenarioLabView: React.FC<Props> = ({
           faultStart + faultDuration
         }`
       );
-      setReplayState((prev) => (prev ? { ...prev, active_fault: res.active_fault } : null));
+      setReplayState((prev) => (prev ? { ...prev, active_fault: res.injected_fault } : null));
     } catch (err: any) {
-      alert("Fault injection error: " + err.message);
+      setSessionError("Fault injection failed: " + err.message);
     }
   };
 
@@ -144,6 +160,9 @@ export const ScenarioLabView: React.FC<Props> = ({
     try {
       const res = await api.resetReplay(replayState.session_id);
       setReplayState(res);
+      const exported=await api.exportReplay(res.session_id);
+      setSessionNamespace(exported.namespace);
+      sessionStorage.setItem("flairguard_namespace",exported.namespace);
       setHistoryTrace([]);
       setFaultNotice(null);
     } catch (err: any) {
@@ -162,6 +181,9 @@ export const ScenarioLabView: React.FC<Props> = ({
 
   return (
     <div>
+      {sessionError && <div role="alert" className="error-banner">{sessionError}</div>}
+      <p className="scope-note">Historical replay. Sensor faults alter measurements only. Acknowledgement and closure record workflow; they do not repair an aircraft.</p>
+      <div data-testid="replay-identity" className="scope-note">Session {replayState?.session_id || "unavailable"} | Namespace {sessionNamespace} | Cycle {replayState?.current_cycle ?? 0}</div>
       {/* Session Controls Header */}
       <div className="panel">
         <div className="panel-header" style={{ marginBottom: "1rem" }}>
@@ -172,7 +194,7 @@ export const ScenarioLabView: React.FC<Props> = ({
             <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>Policy:</span>
             <select
               className="select-control"
-              value={policy}
+              aria-label="Replay policy" value={policy}
               onChange={(e) => setPolicy(e.target.value)}
             >
               <option value="point">Champion Point-RUL Policy</option>
@@ -183,7 +205,7 @@ export const ScenarioLabView: React.FC<Props> = ({
 
             <select
               className="select-control"
-              value={dataset}
+              aria-label="Replay dataset" value={dataset}
               onChange={(e) => setDataset(e.target.value)}
             >
               <option value="FD002">FD002 (Multi-Regime)</option>
@@ -194,14 +216,14 @@ export const ScenarioLabView: React.FC<Props> = ({
               type="number"
               className="input-control"
               style={{ width: "80px" }}
-              value={engineId}
+              aria-label="Replay engine" value={engineId}
               min={1}
               max={dataset === "FD002" ? 259 : 100}
               onChange={(e) => setEngineId(parseInt(e.target.value) || 1)}
             />
 
             <button className="btn btn-secondary btn-sm" onClick={startSession} disabled={loading}>
-              <RotateCcw size={13} /> Re-Init
+              <RotateCcw size={13} /> Reconnect replay
             </button>
           </div>
         </div>
@@ -222,7 +244,7 @@ export const ScenarioLabView: React.FC<Props> = ({
             <button
               className={`btn ${isPlaying ? "btn-danger" : "btn-primary"}`}
               onClick={() => setIsPlaying(!isPlaying)}
-              disabled={replayState?.is_completed}
+              disabled={loading || !replayState || replayState.is_completed}
             >
               {isPlaying ? <Pause size={15} /> : <Play size={15} />}
               {isPlaying ? "Pause Stream" : "Auto-Play"}
@@ -230,21 +252,21 @@ export const ScenarioLabView: React.FC<Props> = ({
             <button
               className="btn btn-secondary"
               onClick={() => stepSession(1)}
-              disabled={isPlaying || replayState?.is_completed}
+              disabled={loading || !replayState || isPlaying || replayState.is_completed}
             >
               +1 Cycle
             </button>
             <button
               className="btn btn-secondary"
               onClick={() => stepSession(5)}
-              disabled={isPlaying || replayState?.is_completed}
+              disabled={loading || !replayState || isPlaying || replayState.is_completed}
             >
               +5 Cycles
             </button>
             <button
               className="btn btn-secondary"
               onClick={() => stepSession(20)}
-              disabled={isPlaying || replayState?.is_completed}
+              disabled={loading || !replayState || isPlaying || replayState.is_completed}
             >
               +20 Cycles
             </button>
@@ -264,7 +286,7 @@ export const ScenarioLabView: React.FC<Props> = ({
             {replayState?.active_work_order ? (
               <button
                 className="btn btn-danger"
-                onClick={() => onNavigateToWorkOrders(replayState.active_work_order?.work_order_id)}
+                onClick={() => onNavigateToWorkOrders(replayState.active_work_order?.work_order_id, sessionNamespace)}
               >
                 <FileText size={14} /> Active Work Order ({replayState.active_work_order.severity})
               </button>
@@ -395,7 +417,7 @@ export const ScenarioLabView: React.FC<Props> = ({
               <select
                 className="select-control"
                 style={{ width: "100%" }}
-                value={faultType}
+                aria-label="Fault mechanism" value={faultType}
                 onChange={(e) => setFaultType(e.target.value)}
               >
                 <option value="stuck_sensor">Stuck Sensor (Frozen Values)</option>
@@ -412,7 +434,7 @@ export const ScenarioLabView: React.FC<Props> = ({
               <select
                 className="select-control"
                 style={{ width: "100%" }}
-                value={faultChannel}
+                aria-label="Fault channel" value={faultChannel}
                 onChange={(e) => setFaultChannel(e.target.value)}
               >
                 <option value="sensor_11">Sensor 11 (Static Pressure - Active)</option>
@@ -431,7 +453,7 @@ export const ScenarioLabView: React.FC<Props> = ({
                   type="number"
                   className="input-control"
                   style={{ width: "100%" }}
-                  value={faultStart}
+                  aria-label="Fault onset" value={faultStart}
                   onChange={(e) => setFaultStart(parseInt(e.target.value) || 20)}
                 />
               </div>
@@ -443,7 +465,7 @@ export const ScenarioLabView: React.FC<Props> = ({
                   type="number"
                   className="input-control"
                   style={{ width: "100%" }}
-                  value={faultDuration}
+                  aria-label="Fault duration" value={faultDuration}
                   onChange={(e) => setFaultDuration(parseInt(e.target.value) || 10)}
                 />
               </div>
@@ -456,7 +478,7 @@ export const ScenarioLabView: React.FC<Props> = ({
                   step="0.5"
                   className="input-control"
                   style={{ width: "100%" }}
-                  value={faultMagnitude}
+                  aria-label="Fault magnitude" value={faultMagnitude}
                   onChange={(e) => setFaultMagnitude(parseFloat(e.target.value) || 1.0)}
                 />
               </div>
@@ -561,7 +583,7 @@ export const ScenarioLabView: React.FC<Props> = ({
                       {ev.work_order_id ? (
                         <button
                           className="btn btn-secondary btn-sm"
-                          onClick={() => onNavigateToWorkOrders(ev.work_order_id!)}
+                          onClick={() => onNavigateToWorkOrders(ev.work_order_id!, sessionNamespace)}
                         >
                           {ev.work_order_id.slice(0, 12)}...
                         </button>

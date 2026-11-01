@@ -395,3 +395,15 @@ body {
   width: 90%;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
+
+/* Phase D: evidence hierarchy, honest states and bounded mobile layouts. */
+.scope-note { color: var(--text-secondary); font-size: .85rem; line-height: 1.6; margin: .75rem 0; }
+.error-banner { padding: 1rem; border: 1px solid var(--accent-amber); color: var(--accent-amber); border-radius: .5rem; margin-bottom: 1rem; }
+.research-controls { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0; }
+.research-controls label { display: flex; flex-direction: column; gap: .4rem; font-size: .8rem; }
+.research-controls select { color: var(--text-primary); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: .35rem; padding: .5rem; }
+.research-stats { display: flex; flex-wrap: wrap; gap: 1.5rem; padding: 1rem 0; }
+.research-stats strong { display: block; color: var(--accent-cyan); font-size: 1.15rem; }
+details { overflow-wrap: anywhere; } summary { cursor: pointer; padding: .6rem 0; }
+@media (max-width: 900px) { .app-header { flex-wrap: wrap; height: auto; gap: .8rem; padding: 1rem; } .nav-tabs { width: 100%; overflow-x: auto; flex-wrap: nowrap; } .main-content { padding: .75rem; max-width: 100vw; } .header-meta { display: none; } .case-study-tag { display: none; } }
+@media (max-width: 600px) { .kpi-grid, .main-grid { grid-template-columns: 1fr !important; } .panel { padding: 1rem; min-width: 0; } .font-mono { overflow-wrap: anywhere; } .research-controls label { width: 100%; } }

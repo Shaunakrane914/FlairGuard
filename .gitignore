@@ -40,3 +40,7 @@ frontend/dist/
 **/mlruns/
 **/mlflow.sqlite
 
+
+# Browser test infrastructure is reproducible; evidence lives in versioned artifacts.
+frontend/test-results/
+frontend/playwright-report/

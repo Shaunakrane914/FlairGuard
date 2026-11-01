@@ -14,6 +14,7 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
   const [datasets, setDatasets] = useState<DatasetInfo[]>([]);
   const [engines, setEngines] = useState<EngineSummary[]>([]);
   const [selectedDataset, setSelectedDataset] = useState<string>("FD002");
+  const [loadError,setLoadError]=useState<string|null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -26,12 +27,13 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
         api.getDatasets(),
         api.getEngines(selectedDataset, 60),
       ]);
+      setLoadError(null);
       setHealth(h);
       setKpis(k);
       setDatasets(d);
       setEngines(e);
     } catch (err) {
-      console.error("Failed to load fleet overview data:", err);
+      setLoadError(String(err));
     } finally {
       setLoading(false);
     }
@@ -47,6 +49,7 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
 
   return (
     <div>
+      {loadError && <div role="alert" className="error-banner">{loadError}</div>}
       {/* System Health Status Bar */}
       <div
         style={{
@@ -89,11 +92,11 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
       <div className="kpi-grid">
         <div className="kpi-card">
           <div className="kpi-card-header">
-            <span>Monitored Engines</span>
+            <span>Dataset engines</span>
             <Activity size={16} color="var(--accent-blue)" />
           </div>
-          <div className="kpi-value">{kpis?.total_monitored_engines ?? 360}</div>
-          <div className="kpi-subtext">Across NASA FD001 & FD002 Fleets</div>
+          <div className="kpi-value">{kpis?.total_monitored_engines ?? "Unavailable"}</div>
+          <div className="kpi-subtext">Available NASA dataset records; not a live monitored fleet</div>
         </div>
 
         <div className="kpi-card">
@@ -102,7 +105,7 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
             <AlertTriangle size={16} color="var(--accent-amber)" />
           </div>
           <div className="kpi-value" style={{ color: "var(--accent-amber)" }}>
-            {kpis?.active_work_orders ?? 0}
+            {kpis?.active_work_orders ?? "Unavailable"}
           </div>
           <div className="kpi-subtext">Pending Dispatch or In-Progress</div>
         </div>
@@ -113,7 +116,7 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
             <ShieldCheck size={16} color="var(--accent-purple)" />
           </div>
           <div className="kpi-value" style={{ color: "var(--accent-purple)" }}>
-            {kpis?.open_escalations ?? 0}
+            {kpis?.open_escalations ?? "Unavailable"}
           </div>
           <div className="kpi-subtext">Telemetry Audited with Human Referral</div>
         </div>
@@ -124,9 +127,9 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
             <Cpu size={16} color="var(--accent-green)" />
           </div>
           <div className="kpi-value" style={{ fontSize: "1.25rem", color: "var(--accent-green)" }}>
-            {kpis?.champion_policy ?? "Tuned Point-RUL"}
+            {kpis?.champion_policy ?? "Unavailable"}
           </div>
-          <div className="kpi-subtext">Threshold: 20 cycles · Zero Hallucinations</div>
+          <div className="kpi-subtext">Threshold: 20 cycles · Pinned saved model; historical replay</div>
         </div>
       </div>
 
@@ -143,7 +146,7 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
                 className={`btn ${selectedDataset === d.id ? "btn-primary" : "btn-secondary"}`}
                 onClick={() => setSelectedDataset(d.id)}
               >
-                {d.id} ({d.operating_conditions === "ONE" ? "Single-Regime" : "6-Regimes Multi"})
+                {d.id} ({d.operating_conditions === 1 ? "Single-Regime" : "6-Regimes Multi"})
               </button>
             ))}
           </div>
@@ -233,19 +236,19 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
                   </td>
                   <td className="font-mono">{eng.total_cycles} cycles</td>
                   <td className="font-mono">
-                    {eng.predicted_rul != null ? (
+                    {eng.last_predicted_rul != null ? (
                       <span
                         style={{
                           fontWeight: 600,
                           color:
-                            eng.predicted_rul < 20
+                            eng.last_predicted_rul < 20
                               ? "var(--accent-red)"
-                              : eng.predicted_rul < 45
+                              : eng.last_predicted_rul < 45
                               ? "var(--accent-amber)"
                               : "var(--accent-green)",
                         }}
                       >
-                        {eng.predicted_rul.toFixed(1)} cycles
+                        {eng.last_predicted_rul.toFixed(1)} cycles
                       </span>
                     ) : (
                       <span style={{ color: "var(--text-muted)" }}>Ready to Replay</span>
@@ -254,16 +257,16 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
                   <td>
                     <span
                       className={`badge ${
-                        eng.status === "CRITICAL"
+                        eng.current_status === "CRITICAL"
                           ? "badge-critical"
-                          : eng.status === "WARNING"
+                          : ["HIGH","MEDIUM"].includes(eng.current_status)
                           ? "badge-warning"
-                          : eng.status === "ESCALATED"
+                          : eng.current_status === "ESCALATE_HUMAN"
                           ? "badge-escalated"
-                          : "badge-nominal"
+                          : eng.current_status === "NOMINAL" ? "badge-nominal" : "badge-neutral"
                       }`}
                     >
-                      {eng.status}
+                      {eng.current_status}
                     </span>
                   </td>
                   <td>
@@ -276,6 +279,8 @@ export const FleetOverviewView: React.FC<Props> = ({ onSelectEngine, onNavigateT
                       </button>
                       <button
                         className="btn btn-primary btn-sm"
+                        disabled={!health?.models_loaded.includes(eng.dataset)}
+                        title={health?.models_loaded.includes(eng.dataset) ? "Start saved-model replay" : "Browsing/research only: no active serving model"}
                         onClick={() => onNavigateToReplay(eng.dataset, eng.engine_id)}
                       >
                         Replay Lab <ArrowRight size={12} />

@@ -66,7 +66,7 @@ export const EngineDiagnosticsView: React.FC<Props> = ({
           <div>
             <h2 style={{ fontSize: "1.2rem", fontWeight: 700 }}>Engine Telemetry Diagnostics</h2>
             <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-              High-Frequency Sensor Replay & Operating Regime Diagnostics
+              Historical per-cycle sensor measurements and operating settings
             </div>
           </div>
         </div>
@@ -74,11 +74,13 @@ export const EngineDiagnosticsView: React.FC<Props> = ({
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
           <select
             className="select-control"
-            value={dataset}
+            aria-label="Diagnostics dataset" value={dataset}
             onChange={(e) => setDataset(e.target.value)}
           >
             <option value="FD002">FD002 (6 Regimes, Complex)</option>
             <option value="FD001">FD001 (Single Regime)</option>
+            <option value="FD003">FD003 (Browsing/research only)</option>
+            <option value="FD004">FD004 (Browsing/research only)</option>
           </select>
 
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -87,7 +89,7 @@ export const EngineDiagnosticsView: React.FC<Props> = ({
               type="number"
               className="input-control"
               style={{ width: "90px" }}
-              value={engineId}
+              aria-label="Diagnostics engine" value={engineId}
               min={1}
               max={dataset === "FD002" ? 259 : 100}
               onChange={(e) => setEngineId(parseInt(e.target.value) || 1)}
@@ -100,6 +102,8 @@ export const EngineDiagnosticsView: React.FC<Props> = ({
 
           <button
             className="btn btn-primary"
+            disabled={!["FD001","FD002"].includes(dataset)}
+            title={["FD001","FD002"].includes(dataset) ? "Open saved-model replay" : "No active model: research evidence is available separately"}
             onClick={() => onNavigateToReplay(dataset, engineId)}
           >
             Open in Scenario Lab <ArrowRight size={14} />
@@ -131,18 +135,18 @@ export const EngineDiagnosticsView: React.FC<Props> = ({
               <Activity size={16} color="var(--accent-cyan)" />
             </div>
             <div className="kpi-value">{latestRow.cycle} Cycles</div>
-            <div className="kpi-subtext">Flight Operational Lifespan</div>
+            <div className="kpi-subtext">Available observed prefix; not remaining life</div>
           </div>
 
           <div className="kpi-card">
             <div className="kpi-card-header">
-              <span>Operating Altitude & Mach</span>
+              <span>Operating settings 1 / 2</span>
               <Wind size={16} color="var(--accent-purple)" />
             </div>
             <div className="kpi-value" style={{ fontSize: "1.25rem" }}>
-              {latestRow.setting_1?.toFixed(1)}k ft / {latestRow.setting_2?.toFixed(2)} M
+              {latestRow.setting_1?.toFixed(4)} / {latestRow.setting_2?.toFixed(4)}
             </div>
-            <div className="kpi-subtext">Throttle Setting 3: {latestRow.setting_3} TRA</div>
+            <div className="kpi-subtext">Raw setting 3: {latestRow.setting_3}</div>
           </div>
 
           <div className="kpi-card">

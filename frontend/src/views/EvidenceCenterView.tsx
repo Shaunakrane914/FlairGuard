@@ -26,6 +26,8 @@ export const EvidenceCenterView: React.FC = () => {
   const [benchmarks, setBenchmarks] = useState<any[]>([]);
   const [policies, setPolicies] = useState<any[]>([]);
   const [provenance, setProvenance] = useState<any[]>([]);
+  const [modelHistory, setModelHistory] = useState<any[]>([]);
+  const [loadError,setLoadError] = useState<string|null>(null);
   const [trainingJobs, setTrainingJobs] = useState<any[]>([]);
   const [evidenceLoading, setEvidenceLoading] = useState<boolean>(true);
 
@@ -38,12 +40,14 @@ export const EvidenceCenterView: React.FC = () => {
         api.getEvidenceProvenance(),
         api.getTrainingJobs(10),
       ]);
+      setLoadError(null);
+      setModelHistory(await api.getModelHistory());
       setBenchmarks(b);
       setPolicies(p);
       setProvenance(prov);
       setTrainingJobs(jobs);
     } catch (err) {
-      console.error("Failed to load evidence:", err);
+      setLoadError(String(err));
     } finally {
       setEvidenceLoading(false);
     }
@@ -84,6 +88,10 @@ export const EvidenceCenterView: React.FC = () => {
 
   return (
     <div>
+      {loadError && <div role="alert" className="error-banner">{loadError}</div>}
+      <section className="panel"><h2>Persisted model release history</h2>
+        {modelHistory.length ? modelHistory.map((h:any) => <p className="font-mono" key={h.sequence}>{h.dataset} | {h.operation} | {h.model_id.slice(0,24)} | SHA {h.sha256.slice(0,16)} | {h.created}</p>) : <p>Release history unavailable or loading.</p>}
+      </section>
       {/* Evidence Center Header */}
       <div className="panel">
         <div className="panel-header">
@@ -322,7 +330,7 @@ export const EvidenceCenterView: React.FC = () => {
             </label>
             <select
               className="select-control"
-              value={retrainDataset}
+              aria-label="Training dataset" value={retrainDataset}
               onChange={(e) => setRetrainDataset(e.target.value)}
             >
               <option value="FD001">FD001 (Single-Regime)</option>
@@ -336,7 +344,7 @@ export const EvidenceCenterView: React.FC = () => {
             </label>
             <select
               className="select-control"
-              value={challengerModel}
+              aria-label="Challenger model" value={challengerModel}
               onChange={(e) => setChallengerModel(e.target.value)}
             >
               <option value="LightGBM">LightGBM Regressor (Tuned Leaves & Trees)</option>

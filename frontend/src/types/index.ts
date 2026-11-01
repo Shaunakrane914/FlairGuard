@@ -10,21 +10,25 @@ export interface HealthStatus {
 export interface DatasetInfo {
   id: string;
   description: string;
-  operating_conditions: string;
-  fault_modes: string;
+  operating_conditions: number;
+  fault_modes: number;
   train_engines: number;
   test_engines: number;
+  name: string;
+  total_records: number;
   sensors_count: number;
 }
 
 export interface EngineSummary {
   engine_id: number;
   dataset: string;
-  split: string;
+  split: "train" | "test";
   total_cycles: number;
-  latest_cycle: number;
-  predicted_rul?: number | null;
-  status: "NOMINAL" | "WARNING" | "CRITICAL" | "ESCALATED";
+  last_observed_cycle: number;
+  last_predicted_rul?: number | null;
+  last_prediction_usable: boolean;
+  current_status: string;
+  active_work_order_id?: string | null;
 }
 
 export interface FleetKPIs {

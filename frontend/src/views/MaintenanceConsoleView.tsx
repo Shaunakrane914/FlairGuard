@@ -13,9 +13,10 @@ import {
 
 interface Props {
   highlightOrderId?: string | null;
+  namespace?: string;
 }
 
-export const MaintenanceConsoleView: React.FC<Props> = ({ highlightOrderId }) => {
+export const MaintenanceConsoleView: React.FC<Props> = ({ highlightOrderId, namespace = "default" }) => {
   const [orders, setOrders] = useState<WorkOrderRecord[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLogRecord[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
@@ -33,8 +34,8 @@ export const MaintenanceConsoleView: React.FC<Props> = ({ highlightOrderId }) =>
     setLoading(true);
     try {
       const [wo, logs] = await Promise.all([
-        api.getWorkOrders(statusFilter === "ALL" ? undefined : statusFilter),
-        api.getAuditLog(undefined, undefined, 50),
+        api.getWorkOrders(statusFilter === "ALL" ? undefined : statusFilter, namespace),
+        api.getAuditLog(undefined, namespace, 50),
       ]);
       setOrders(wo);
       setAuditLogs(logs);
@@ -52,19 +53,13 @@ export const MaintenanceConsoleView: React.FC<Props> = ({ highlightOrderId }) =>
 
   useEffect(() => {
     loadData();
-  }, [statusFilter]);
+  }, [statusFilter, namespace]);
 
   const openTransitionModal = (order: WorkOrderRecord, nextStatus: string) => {
     setSelectedOrder(order);
     setTargetStatus(nextStatus);
-    setTransitionReason(
-      nextStatus === "ACKNOWLEDGED"
-        ? "Dispatcher confirmed critical telemetry trigger"
-        : nextStatus === "IN_PROGRESS"
-        ? "Technician dispatched to line depot for physical inspection"
-        : "Replaced component sensor harness; test run nominal"
-    );
-    setResolutionNotes(nextStatus === "CLOSED" ? "Replaced sensor wiring and re-calibrated nominal baseline." : "");
+    setTransitionReason(nextStatus === "ACKNOWLEDGED" ? "Operator acknowledged historical replay order" : "");
+    setResolutionNotes("");
     setModalOpen(true);
   };
 
@@ -90,6 +85,7 @@ export const MaintenanceConsoleView: React.FC<Props> = ({ highlightOrderId }) =>
 
   return (
     <div>
+      <p className="scope-note">Orders belong to a replay namespace. Human review records an administrative action; it supplies no new failure label or physical repair outcome.</p>
       {/* Header & Status Filter Bar */}
       <div
         className="panel"
@@ -106,7 +102,7 @@ export const MaintenanceConsoleView: React.FC<Props> = ({ highlightOrderId }) =>
           <div>
             <h2 style={{ fontSize: "1.2rem", fontWeight: 700 }}>Maintenance Work Order Console</h2>
             <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>
-              Transactional Work Order Lifecycle & Immutable SQLite Audit Trail
+              Persisted workflow ? Namespace: {namespace} ? Closure is not maintenance execution
             </div>
           </div>
         </div>

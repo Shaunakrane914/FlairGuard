@@ -4,6 +4,7 @@ import { EngineDiagnosticsView } from "./views/EngineDiagnosticsView";
 import { ScenarioLabView } from "./views/ScenarioLabView";
 import { FleetSchedulerView } from "./views/FleetSchedulerView";
 import { MaintenanceConsoleView } from "./views/MaintenanceConsoleView";
+import { ReliabilityView } from "./views/ReliabilityView";
 import { EvidenceCenterView } from "./views/EvidenceCenterView";
 import {
   LayoutDashboard,
@@ -13,14 +14,16 @@ import {
   Wrench,
   Award,
   Zap,
+  Activity as ActivityIcon,
 } from "lucide-react";
 
-export type NavTab = "fleet" | "diagnostics" | "scenario" | "scheduler" | "maintenance" | "evidence";
+export type NavTab = "fleet" | "diagnostics" | "scenario" | "scheduler" | "maintenance" | "evidence" | "reliability";
 
 export const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<NavTab>("fleet");
+  const [activeTab, setActiveTab] = useState<NavTab>((sessionStorage.getItem("flairguard_tab") as NavTab) || "fleet");
   const [selectedDataset, setSelectedDataset] = useState<string>("FD002");
   const [selectedEngineId, setSelectedEngineId] = useState<number>(15);
+  const [namespace, setNamespace] = useState(sessionStorage.getItem("flairguard_namespace") || "default");
   const [highlightOrderId, setHighlightOrderId] = useState<string | null>(null);
 
   const handleSelectEngineForDiagnostics = (dataset: string, engineId: number) => {
@@ -35,10 +38,13 @@ export const App: React.FC = () => {
     setActiveTab("scenario");
   };
 
-  const handleNavigateToWorkOrders = (workOrderId?: string) => {
+  const handleNavigateToWorkOrders = (workOrderId?: string, replayNamespace?: string) => {
     if (workOrderId) setHighlightOrderId(workOrderId);
+    if (replayNamespace) {setNamespace(replayNamespace);sessionStorage.setItem("flairguard_namespace", replayNamespace);}
     setActiveTab("maintenance");
   };
+
+  React.useEffect(() => {sessionStorage.setItem("flairguard_tab", activeTab);}, [activeTab]);
 
   return (
     <div>
@@ -95,12 +101,15 @@ export const App: React.FC = () => {
           >
             <Award size={15} /> Evidence Center
           </button>
+          <button className={`nav-tab ${activeTab === "reliability" ? "active" : ""}`} onClick={() => setActiveTab("reliability")}>
+            <ActivityIcon /> Reliability research
+          </button>
         </nav>
 
         <div className="header-meta">
           <div className="live-indicator">
             <div className="live-dot" />
-            <span>Fleet Replay Live</span>
+            <span>Historical telemetry replay</span>
           </div>
         </div>
       </header>
@@ -133,10 +142,11 @@ export const App: React.FC = () => {
         {activeTab === "scheduler" && <FleetSchedulerView />}
 
         {activeTab === "maintenance" && (
-          <MaintenanceConsoleView highlightOrderId={highlightOrderId} />
+          <MaintenanceConsoleView highlightOrderId={highlightOrderId} namespace={namespace} />
         )}
 
         {activeTab === "evidence" && <EvidenceCenterView />}
+        {activeTab === "reliability" && <ReliabilityView />}
       </main>
     </div>
   );
