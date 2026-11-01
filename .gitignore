@@ -44,3 +44,5 @@ frontend/dist/
 # Browser test infrastructure is reproducible; evidence lives in versioned artifacts.
 frontend/test-results/
 frontend/playwright-report/
+
+**/matlab_jobs/

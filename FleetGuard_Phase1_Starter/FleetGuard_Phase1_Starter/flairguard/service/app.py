@@ -9,7 +9,8 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from .config import settings
 from .models_registry import model_registry
-from .routes import health, fleet, predictions, replay, orders, mlops, evidence, reliability
+from .routes import health, fleet, predictions, replay, orders, mlops, evidence, reliability, matlab
+from .matlab_jobs import MatlabJobs
 
 logger = logging.getLogger("flairguard.service")
 
@@ -18,7 +19,10 @@ logger = logging.getLogger("flairguard.service")
 async def lifespan(app: FastAPI):
     """Load verified model artifacts on startup."""
     model_registry.load_models()
-    yield
+    app.state.matlab_jobs=MatlabJobs()
+    app.state.matlab_jobs.start()
+    try:yield
+    finally:app.state.matlab_jobs.close()
 
 
 def create_app() -> FastAPI:
@@ -60,6 +64,7 @@ def create_app() -> FastAPI:
     app.include_router(mlops.router)
     app.include_router(evidence.router)
     app.include_router(reliability.router)
+    app.include_router(matlab.router)
 
     # Static frontend hosting if built (searches both container and local paths)
     candidate_paths = [

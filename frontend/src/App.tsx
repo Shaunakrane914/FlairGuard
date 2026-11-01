@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { MatlabView } from "./views/MatlabView";
 import { FleetOverviewView } from "./views/FleetOverviewView";
 import { EngineDiagnosticsView } from "./views/EngineDiagnosticsView";
 import { ScenarioLabView } from "./views/ScenarioLabView";
@@ -17,12 +18,12 @@ import {
   Activity as ActivityIcon,
 } from "lucide-react";
 
-export type NavTab = "fleet" | "diagnostics" | "scenario" | "scheduler" | "maintenance" | "evidence" | "reliability";
+export type NavTab = "fleet" | "diagnostics" | "scenario" | "scheduler" | "maintenance" | "evidence" | "reliability" | "matlab";
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<NavTab>((sessionStorage.getItem("flairguard_tab") as NavTab) || "fleet");
-  const [selectedDataset, setSelectedDataset] = useState<string>("FD002");
-  const [selectedEngineId, setSelectedEngineId] = useState<number>(15);
+  const [selectedDataset, setSelectedDataset] = useState<string>(sessionStorage.getItem("flairguard_selected_dataset") || "FD002");
+  const [selectedEngineId, setSelectedEngineId] = useState<number>(Number(sessionStorage.getItem("flairguard_selected_engine") || 15));
   const [namespace, setNamespace] = useState(sessionStorage.getItem("flairguard_namespace") || "default");
   const [highlightOrderId, setHighlightOrderId] = useState<string | null>(null);
 
@@ -46,13 +47,16 @@ export const App: React.FC = () => {
 
   React.useEffect(() => {sessionStorage.setItem("flairguard_tab", activeTab);}, [activeTab]);
 
+  React.useEffect(() => {sessionStorage.setItem("flairguard_selected_dataset",selectedDataset);sessionStorage.setItem("flairguard_selected_engine",String(selectedEngineId));}, [selectedDataset,selectedEngineId]);
+
   return (
     <div>
-      <label style={{display:"block",padding:"0.5rem 1rem",fontSize:"0.8rem"}}>
-        Operator key (this browser session only): <input type="password" aria-label="Operator API key"
+      <a className="skip-link" href="#workspace">Skip to workspace</a>
+      <details className="operator-session" open><summary>Operator access</summary><label>
+        Session API key <input type="password" aria-label="Operator API key"
           defaultValue={sessionStorage.getItem("flairguard_operator_key") || ""}
           onChange={(e) => sessionStorage.setItem("flairguard_operator_key",e.target.value)} />
-      </label>
+      </label><small>Session storage only. Required for administrative actions.</small></details>
       {/* Top Navigation Bar */}
       <header className="app-header">
         <div className="brand-section">
@@ -64,7 +68,7 @@ export const App: React.FC = () => {
           <span className="case-study-tag">Case Study 1: Connected Fleet Reliability</span>
         </div>
 
-        <nav className="nav-tabs">
+        <nav className="nav-tabs" aria-label="Primary navigation">
           <button
             className={`nav-tab ${activeTab === "fleet" ? "active" : ""}`}
             onClick={() => setActiveTab("fleet")}
@@ -104,6 +108,7 @@ export const App: React.FC = () => {
           <button className={`nav-tab ${activeTab === "reliability" ? "active" : ""}`} onClick={() => setActiveTab("reliability")}>
             <ActivityIcon /> Reliability research
           </button>
+          <button className={`nav-tab ${activeTab === "matlab" ? "active" : ""}`} onClick={() => setActiveTab("matlab")}><ActivityIcon size={15}/> MATLAB analysis</button>
         </nav>
 
         <div className="header-meta">
@@ -115,7 +120,7 @@ export const App: React.FC = () => {
       </header>
 
       {/* Main Content Area */}
-      <main className="main-content">
+      <main id="workspace" className="main-content" tabIndex={-1}><div className="workspace-context"><span>FLEET RELIABILITY WORKSPACE</span><span>NASA C-MAPSS ? Research &amp; replay</span></div>
         {activeTab === "fleet" && (
           <FleetOverviewView
             onSelectEngine={handleSelectEngineForDiagnostics}
@@ -147,6 +152,7 @@ export const App: React.FC = () => {
 
         {activeTab === "evidence" && <EvidenceCenterView />}
         {activeTab === "reliability" && <ReliabilityView />}
+        {activeTab === "matlab" && <MatlabView />}
       </main>
     </div>
   );

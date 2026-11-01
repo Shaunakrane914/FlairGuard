@@ -37,3 +37,4 @@ docs
 **/artifacts/phase_d/process-*
 **/artifacts/phase_d/docker-*
 **/artifacts/phase_d/reliability-v1-run001
+**/artifacts/integration_release

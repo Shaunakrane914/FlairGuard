@@ -102,7 +102,29 @@ test('operator workflow uses real models, orders, durable sessions and blocked p
   await page.getByRole('button',{name:'Inspect ledger'}).first().click();
   await expect(page.getByRole('heading',{name:'Executed-action ledger'})).toBeVisible();
   await page.screenshot({path:path.join(output,'04-research-ledger.png'),fullPage:true});
+  await page.getByRole('button',{name:'MATLAB analysis',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'MATLAB analysis',exact:true})).toBeVisible();
+  await expect(page.getByText('MATLAB similarity',{exact:true}).first()).toBeVisible();
+  if(process.env.FLAIRGUARD_MATLAB_EXECUTABLE){
+    await page.getByRole('button',{name:'Run MATLAB comparison',exact:true}).click();
+    await expect(page.getByTestId('matlab-job-status')).toHaveText('COMPLETED',{timeout:150000});
+    await expect(page.getByText('Errors on identical available prefixes',{exact:true})).toBeVisible();
+    await page.getByText('Errors on identical available prefixes',{exact:true}).click();
+    await expect(page.getByRole('columnheader',{name:'Matched rows'})).toBeVisible();
+    await page.getByLabel('MATLAB telemetry scenario').selectOption('missing');
+    await page.evaluate(()=>{(document.activeElement as HTMLElement)?.blur();window.scrollTo(0,0);});
+    await page.screenshot({path:path.join(output,'06-matlab-real-job.png'),fullPage:true});
+    const pendingDownload=page.waitForEvent('download');
+    await page.getByRole('button',{name:'Export comparison',exact:true}).click();
+    await (await pendingDownload).saveAs(path.join(output,'matlab-browser-export.json'));
+    await page.reload();
+    await expect(page.getByTestId('matlab-job-status')).toHaveText('COMPLETED');
+    await page.getByRole('button',{name:'Open completed result'}).click();
+  }else{
+    await expect(page.getByRole('button',{name:'Run MATLAB comparison',exact:true})).toBeDisabled();
+  }
   await page.setViewportSize({width:390,height:844});
+  await page.evaluate(()=>window.scrollTo(0,0));
   await page.screenshot({path:path.join(output,'05-mobile-evidence.png'),fullPage:true});
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+2);
   expect(overflow).toBe(false);

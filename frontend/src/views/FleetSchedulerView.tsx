@@ -73,7 +73,6 @@ export const FleetSchedulerView: React.FC = () => {
 
   useEffect(() => {
     loadSnapshot();
-    runSimulation();
   }, [selectedDataset, numBays, serviceDuration, activePolicy]);
 
   return (
@@ -83,7 +82,7 @@ export const FleetSchedulerView: React.FC = () => {
         <div>
           <h1 style={{ fontSize: "1.5rem", fontWeight: 700, margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Warehouse size={24} color="#3b82f6" />
-            Depot Maintenance Capacity & Scheduling Optimizer
+            Depot scheduling benchmark
           </h1>
           <p style={{ margin: "0.25rem 0 0", color: "#64748b", fontSize: "0.875rem" }}>
             Resource-constrained hangar bay scheduling. Compares dispatch policies (FCFS vs EDF vs RUL Priority vs Uncalibrated margin) on identical saved-model predictions. No calibrated failure probability or promoted scheduler.

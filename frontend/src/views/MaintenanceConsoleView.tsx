@@ -17,6 +17,7 @@ interface Props {
 }
 
 export const MaintenanceConsoleView: React.FC<Props> = ({ highlightOrderId, namespace = "default" }) => {
+  const [loadError,setLoadError]=useState<string|null>(null);
   const [orders, setOrders] = useState<WorkOrderRecord[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLogRecord[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
@@ -37,6 +38,7 @@ export const MaintenanceConsoleView: React.FC<Props> = ({ highlightOrderId, name
         api.getWorkOrders(statusFilter === "ALL" ? undefined : statusFilter, namespace),
         api.getAuditLog(undefined, namespace, 50),
       ]);
+      setLoadError(null);
       setOrders(wo);
       setAuditLogs(logs);
 
@@ -45,7 +47,7 @@ export const MaintenanceConsoleView: React.FC<Props> = ({ highlightOrderId, name
         if (found) setSelectedOrder(found);
       }
     } catch (err) {
-      console.error("Failed to load maintenance console data:", err);
+      setLoadError(String(err));
     } finally {
       setLoading(false);
     }
@@ -86,6 +88,7 @@ export const MaintenanceConsoleView: React.FC<Props> = ({ highlightOrderId, name
   return (
     <div>
       <p className="scope-note">Orders belong to a replay namespace. Human review records an administrative action; it supplies no new failure label or physical repair outcome.</p>
+      {loadError && <div role="alert" className="error-banner">{loadError}</div>}
       {/* Header & Status Filter Bar */}
       <div
         className="panel"

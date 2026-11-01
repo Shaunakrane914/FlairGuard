@@ -118,6 +118,14 @@ export const api = {
   exportReplay: (sessionId: string) => request<any>(`/replay/${sessionId}/export`),
   getModelHistory: () => request<any[]>("/models/history"),
   getReliability: () => request<any>("/reliability/summary"),
+  getMatlabCapabilities: () => request<any>("/matlab/capabilities"),
+  getMatlabHistorical: () => request<any>("/matlab/historical"),
+  getMatlabJobs: () => request<any[]>("/matlab/jobs"),
+  getMatlabJob: (id:string) => request<any>(`/matlab/jobs/${id}`),
+  getMatlabResult: (id:string) => request<any>(`/matlab/jobs/${id}/result`),
+  getMatlabLog: (id:string) => request<any>(`/matlab/jobs/${id}/log`),
+  runMatlab: (request_key:string) => request<any>("/matlab/jobs",{method:"POST",body:JSON.stringify({request_key,task:"fd003_similarity_v1"})}),
+  cancelMatlab: (id:string) => request<any>(`/matlab/jobs/${id}/cancel`,{method:"POST"}),
 
   // Work Orders & Maintenance
   getWorkOrders: (status?: string, namespace?: string) => {

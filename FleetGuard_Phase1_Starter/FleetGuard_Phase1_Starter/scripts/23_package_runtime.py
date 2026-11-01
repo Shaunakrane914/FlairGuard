@@ -33,6 +33,15 @@ def package(project,output):
         if file_sha(source)!=sha:raise ValueError('Phase D artifact changed')
         sources.append(source)
     sources += [latest,root/'manifest.json']
+    # Optional sealed MATLAB evidence remains inspectable without a MATLAB runtime.
+    historical=project/'artifacts/phase_d/matlab-similarity-v1-run001'
+    if historical.is_dir():
+        matlab_manifest=json.loads((historical/'manifest.json').read_text())
+        for relative,sha in matlab_manifest['files'].items():
+            source=historical/relative.replace(chr(92),'/')
+            if file_sha(source)!=sha:raise ValueError('MATLAB evidence integrity failure')
+            sources.append(source)
+        sources.append(historical/'manifest.json')
     for source in sources:
         target=output/source.relative_to(project);target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(source,target)
     inventory={str(f.relative_to(output)):file_sha(f) for f in output.rglob('*') if f.is_file()}

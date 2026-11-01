@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     mlflow_required: bool = True
     mlflow_tracking_uri: str = ""
     api_key: str = ""
+    # Optional local research worker. Never required for Python serving.
+    matlab_executable: str = ""
+    matlab_timeout_seconds: int = 420
 
     # Server configuration & Security hardening
     host: str = "127.0.0.1"
