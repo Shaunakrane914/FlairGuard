@@ -12,6 +12,11 @@ from flairguard.service.config import settings
 router = APIRouter(prefix="/api/v1/models", tags=["MLOps & Lifecycle"])
 
 
+@router.get('/history')
+def model_history():
+    return model_registry.history()
+
+
 class RollbackRequest(BaseModel):
     dataset: str = "FD002"
 

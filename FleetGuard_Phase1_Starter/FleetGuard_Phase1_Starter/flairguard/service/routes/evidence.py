@@ -77,7 +77,7 @@ def get_verified_benchmarks():
         results.append(BenchmarkModelMetric(model_name=name,dataset="FD001",split="Frozen evaluation endpoints",
             engine_count=frame.engine_id.nunique(),row_count=len(frame),mae=m["mae_cycles"],rmse=m["rmse_cycles"],
             nasa_score=m["phm08_mean"],status="Fit-OOF selected predictor" if name=="LightGBM" else "Fixed comparator",
-            source_artifact=str(path.relative_to(settings.root_dir)),source_sha256=file_sha(path)))
+            source_artifact="artifacts/"+path.relative_to(ARTIFACTS_DIR).as_posix(),source_sha256=file_sha(path)))
     b = "phase_b/fd002-v1-run002"
     path = verified_file(b,"selection.json")
     selection = json.loads(path.read_text())
@@ -89,7 +89,7 @@ def get_verified_benchmarks():
         results.append(BenchmarkModelMetric(model_name=name,dataset="FD002",split="Fit-only OOF endpoints",
             engine_count=endpoint.engine_id.nunique(),row_count=m["n_snapshots"],mae=m["mae_cycles"],rmse=m["rmse_cycles"],
             nasa_score=m["phm08_mean"],status="OOF selected candidate" if name==selection["model"] else "Fixed comparator",
-            source_artifact=str(path.relative_to(settings.root_dir)),source_sha256=file_sha(path)))
+            source_artifact="artifacts/"+path.relative_to(ARTIFACTS_DIR).as_posix(),source_sha256=file_sha(path)))
     cov = "coverage_study/run001"
     for ds in ("FD003","FD004"):
         for name in ("RegimeLightGBM","GlobalLightGBM","AgeRidge","MatlabPCAAgeRidge"):
@@ -103,7 +103,7 @@ def get_verified_benchmarks():
                 engine_count=frame.engine_id.nunique(),row_count=len(frame),mae=m["mae_cycles"],rmse=m["rmse_cycles"],
                 nasa_score=m["phm08_mean"],near_failure_engine_count=near.engine_id.nunique(),dangerous_engine_count=danger.engine_id.nunique(),
                 status="Secondary full-life diagnostic; no safety superiority claim",
-                source_artifact=str(path.relative_to(settings.root_dir)),source_sha256=file_sha(path)))
+                source_artifact="artifacts/"+path.relative_to(ARTIFACTS_DIR).as_posix(),source_sha256=file_sha(path)))
     return results
 
 

@@ -25,3 +25,15 @@ docs
 **/model_governance
 **/training_artifacts
 **/mlruns
+
+**/artifacts/phase_d/baseline-*
+**/artifacts/phase_d/browser-*
+**/artifacts/phase_d/software-*
+**/artifacts/phase_d/verification-*
+**/artifacts/phase_d/runtime-*
+**/artifacts/phase_d/matlab-*
+**/artifacts/phase_d/*.log
+
+**/artifacts/phase_d/process-*
+**/artifacts/phase_d/docker-*
+**/artifacts/phase_d/reliability-v1-run001

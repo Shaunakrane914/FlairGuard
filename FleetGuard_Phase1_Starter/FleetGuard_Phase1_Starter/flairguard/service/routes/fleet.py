@@ -96,7 +96,7 @@ def list_engines(
         # Check if an active work order exists in the store
         active_wo = store.get_active_work_order(int(eng_id), asset_id=str(eng_id))
         
-        status = "NOMINAL"
+        status = "UNKNOWN"
         active_wo_id = None
         if active_wo:
             status = active_wo.get("severity", "MEDIUM")
@@ -105,6 +105,7 @@ def list_engines(
         summaries.append(EngineSummary(
             engine_id=int(eng_id),
             dataset=ds,
+            split=split,
             total_cycles=total_cyc,
             last_observed_cycle=total_cyc,
             current_status=status,

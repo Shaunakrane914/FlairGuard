@@ -5,6 +5,9 @@ deterministic reset epochs, and cross-process restart recovery.
 """
 import json
 import uuid
+import math
+import threading
+from functools import wraps
 from typing import Dict, Any, Optional, List, Tuple
 import numpy as np
 import pandas as pd
@@ -14,6 +17,14 @@ from flairguard.data import read_trajectories
 from flairguard.quality import TELEMETRY_CHANNELS, ACTIVE_SENSORS
 from flairguard.storage import WorkOrderStore
 from flairguard.replay import CausalReplay
+
+
+def serialized(method):
+    @wraps(method)
+    def call(self,*args,**kwargs):
+        with self._lock:
+            return method(self,*args,**kwargs)
+    return call
 
 
 class ReplaySession:
@@ -33,6 +44,7 @@ class ReplaySession:
         reset_epoch: int = 0,
         model_release: Optional[str] = None,
     ):
+        self._lock=threading.RLock()
         self.session_id = session_id
         self.dataset = dataset.upper()
         self.engine_id = engine_id
@@ -82,6 +94,7 @@ class ReplaySession:
         self.last_evidence: Optional[Dict[str, Any]] = None
         self.last_raw_values: Dict[str, float] = {}
 
+    @serialized
     def inject_fault(
         self,
         fault_type: str,
@@ -151,6 +164,7 @@ class ReplaySession:
                 return modified, True
         return telemetry, False
 
+    @serialized
     def step(self, count: int = 1) -> List[Dict[str, Any]]:
         """Advance causal telemetry stream by count cycles."""
         results = []
@@ -193,6 +207,10 @@ class ReplaySession:
                 "severity": decision_record.get("severity") or prop_data.get("severity"),
                 "action_type": prop_data.get("action_type"),
             }
+            # Wire format uses null for unavailable sensor values; the ledger retains
+            # its explicit nonfinite markers and original event hash.
+            evidence['telemetry'] = {k:(float(v) if v is not None and math.isfinite(v) else None)
+                                     for k,v in effective_telemetry.items()}
             self.last_evidence = evidence
             self.current_index += 1
             results.append(evidence)
@@ -203,6 +221,7 @@ class ReplaySession:
 
         return results
 
+    @serialized
     def reset(self):
         """Reset replay session with epoch isolation to guarantee zero event collisions."""
         self.reset_epoch += 1
@@ -224,6 +243,7 @@ class ReplayManager:
     """Manages replay sessions across datasets with durable SQLite backing."""
 
     def __init__(self):
+        self._lock=threading.RLock()
         self.sessions: Dict[str, ReplaySession] = {}
         self._cache_data: Dict[str, Tuple[pd.DataFrame, pd.DataFrame]] = {}
         self.db_store = WorkOrderStore(settings.db_path, namespace="default")
@@ -236,6 +256,7 @@ class ReplayManager:
             self._cache_data[dataset] = (train_df, test_df)
         return self._cache_data[dataset]
 
+    @serialized
     def create_session(
         self,
         dataset: str,
@@ -285,6 +306,7 @@ class ReplayManager:
         session.persist()
         return session
 
+    @serialized
     def get_session(self, session_id: str) -> ReplaySession:
         """Retrieve active session, restoring transparently from SQLite if process restarted."""
         if session_id in self.sessions:
@@ -337,9 +359,10 @@ class ReplayManager:
                 res = json.loads(last_event["result_json"]) if last_event.get("result_json") else {}
                 session.last_evidence = {
                     "cycle": current_cycle,
-                    "telemetry": json.loads(last_event["telemetry_json"]),
-                    "raw_telemetry": json.loads(last_event["telemetry_json"]),
-                    "is_perturbed": False,
+                    "telemetry": {k:(None if isinstance(v,dict) and 'nonfinite' in v else v)
+                                  for k,v in json.loads(last_event["telemetry_json"]).items()},
+                    "raw_telemetry": {k:float(engine_df.iloc[current_cycle-1][k]) for k in TELEMETRY_CHANNELS},
+                    "is_perturbed": bool(session.active_fault and session.active_fault['start_cycle']<=current_cycle<session.active_fault['end_cycle']),
                     "prediction": pred_ev.get("prediction"),
                     "usable": bool(pred_ev.get("usable")),
                     "anomaly_score": pred_ev.get("anomaly_score"),

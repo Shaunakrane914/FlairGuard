@@ -14,12 +14,17 @@ import pandas as pd
 PROJECT=Path(__file__).resolve().parents[1]
 
 
-def verify(output,image,port):
+def verify(output,image,port,payload=None):
     output=output.resolve()
     output.mkdir(parents=True,exist_ok=False)
     key=secrets.token_urlsafe(32)
     name='flairguard-integrity-'+uuid.uuid4().hex[:10]
     env=dict(os.environ,FLAIRGUARD_DB_PATH=str(output/'storage/platform.db'),FLAIRGUARD_API_KEY=key)
+    if payload:
+        payload=payload.resolve()
+        env.update(FLAIRGUARD_DATA_DIR=str(payload/'data/raw'),FLAIRGUARD_ARTIFACTS_DIR=str(payload/'artifacts'),
+            FLAIRGUARD_FD001_BUNDLE_PATH=str(payload/'artifacts/phase_a/fd001-v1-run002/models/bundle.joblib'),
+            FLAIRGUARD_FD002_BUNDLE_PATH=str(payload/'artifacts/phase_b/fd002-v1-run002/models/bundle.joblib'))
     child=None
     log=(output/'server.log').open('a',encoding='utf-8')
     def command(args):
@@ -50,9 +55,16 @@ def verify(output,image,port):
             child=None
     report=dict(mode='docker' if image else 'local_process',image=image,checks=[],status='RUNNING')
     if image:
+        provision=[]
+        if payload:
+            provision=['-v',str(payload)+':/provisioned:ro',
+                '-e','FLAIRGUARD_DATA_DIR=/provisioned/data/raw',
+                '-e','FLAIRGUARD_ARTIFACTS_DIR=/provisioned/artifacts',
+                '-e','FLAIRGUARD_FD001_BUNDLE_PATH=/provisioned/artifacts/phase_a/fd001-v1-run002/models/bundle.joblib',
+                '-e','FLAIRGUARD_FD002_BUNDLE_PATH=/provisioned/artifacts/phase_b/fd002-v1-run002/models/bundle.joblib']
         command(['docker','create','--name',name,'-p',f'127.0.0.1:{port}:8000',
             '-v',name+'-storage:/app/storage','-v',name+'-mlruns:/app/mlruns',
-            '-e','FLAIRGUARD_API_KEY='+key,image])
+            '-e','FLAIRGUARD_API_KEY='+key,*provision,image])
         report.update(container=name,storage_volume=name+'-storage',image_id=command(['docker','image','inspect',image,'--format','{{.Id}}']))
     client=httpx.Client(base_url=f'http://127.0.0.1:{port}',headers={'X-API-Key':key},timeout=180)
     def request(method,path,body=None):
@@ -108,6 +120,7 @@ r.promote_challenger('FD001',b,m,expected_release=m['provenance']['release_id'])
         restored=request('GET',f'/replay/{sid}')
         assert restored['current_cycle']==30 and restored['active_fault']==before['active_fault']
         assert restored['last_evidence']['prediction']==before['last_evidence']['prediction']
+        assert restored['last_evidence']['is_perturbed'] is True
         assert request('GET',f'/work-orders?namespace={name}')[0]['work_order_id']==orders[0]['work_order_id']
         after_restart=request('POST','/predict',body)
         assert after_restart['model_id']==promoted['model_id']
@@ -126,9 +139,14 @@ r.promote_challenger('FD001',b,m,expected_release=m['provenance']['release_id'])
             'Rollback survives second process/container restart','Replay model pin, fault and work orders survive restart',
             'Reset epoch survives restart and accepts fresh events','Required MLflow and artifact-backed real fitting completed']
         availability=request('GET','/evidence/availability')
+        benchmark=request('GET','/evidence/benchmarks')
+        assert benchmark and all(b['source_sha256'] for b in benchmark)
+        research=request('GET','/reliability/summary') if payload else None
+        if research:assert research['execution']['status']=='PASS'
         assert not availability['datasets']['FD003']['serving'] and not availability['datasets']['FD004']['serving']
         report.update(status='PASS',availability=availability,training=training,original_prediction=original,
-                      promoted_prediction=promoted,rollback_prediction=rollback,session_id=sid)
+                      promoted_prediction=promoted,rollback_prediction=rollback,session_id=sid,
+                      provisioned_payload=str(payload) if payload else None,phase_d_run=research['run_id'] if research else None)
     except Exception as exc:
         report.update(status='FAIL',error=str(exc))
         raise
@@ -148,5 +166,6 @@ if __name__=='__main__':
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--image',default=None)
     parser.add_argument('--port',type=int,default=8021)
+    parser.add_argument('--payload',type=Path)
     args=parser.parse_args()
-    verify(args.output,args.image,args.port)
+    verify(args.output,args.image,args.port,args.payload)

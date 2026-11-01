@@ -28,6 +28,14 @@ def serve_prediction(req: PredictRequest):
     combined_telemetry.update(req.sensors)
     
     quality = auditor.audit_row(req.engine_id, req.cycle, combined_telemetry)
+
+    if not set(TELEMETRY_CHANNELS)<=set(combined_telemetry) or any(
+            value is None or not np.isfinite(value) for value in combined_telemetry.values()):
+        return PredictResponse(engine_id=req.engine_id,cycle=req.cycle,dataset=ds,
+            model_id=bundle['model_id'],predicted_rul=None,raw_prediction=None,usable=False,
+            quality=QualityDetails(is_valid=False,quality_code=quality.quality_code,details=quality.details),
+            recommended_action='ESCALATE_HUMAN_DATA_FAULT',recommended_severity='ESCALATE_HUMAN',
+            decision_reason='Required telemetry unavailable; no model forecast was emitted')
     
     # 2. Build History for Causal Features
     history = list(req.history or [])

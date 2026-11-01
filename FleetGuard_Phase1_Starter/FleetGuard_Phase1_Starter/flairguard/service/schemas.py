@@ -15,6 +15,7 @@ class HealthResponse(BaseModel):
 # --- Fleet Management ---
 class DatasetInfo(BaseModel):
     id: str
+    sensors_count: int = 21
     name: str
     operating_conditions: int
     fault_modes: int
@@ -27,6 +28,7 @@ class DatasetInfo(BaseModel):
 class EngineSummary(BaseModel):
     engine_id: int
     dataset: str
+    split: Literal['train','test'] = 'test'
     total_cycles: int
     last_observed_cycle: int
     current_status: Literal["NOMINAL", "MONITOR", "MEDIUM", "HIGH", "CRITICAL", "ESCALATE_HUMAN", "UNKNOWN"]
@@ -53,7 +55,7 @@ class PredictRequest(BaseModel):
     engine_id: int = 1
     cycle: int
     settings: List[float] = Field(..., min_length=3, max_length=3)
-    sensors: Dict[str, float] = Field(..., description="Sensor telemetry channels (sensor_1 through sensor_21)")
+    sensors: Dict[str, Optional[float]] = Field(..., description="Sensor telemetry channels; null explicitly means unavailable")
     history: Optional[List[Dict[str, float]]] = None
 
 

@@ -128,6 +128,13 @@ class ModelRegistry:
         self._refresh()
         return self._metadata.copy()
 
+    def history(self):
+        if not self._loaded:self.load_models()
+        with self._connect() as c:
+            rows=c.execute('SELECT h.seq,h.dataset,h.operation,h.created,r.id,r.sha256,r.metadata FROM history h JOIN releases r ON r.id=h.release_id ORDER BY h.seq DESC').fetchall()
+            return [dict(sequence=r['seq'],dataset=r['dataset'],operation=r['operation'],created=r['created'],
+                release_id=r['id'],sha256=r['sha256'],model_id=json.loads(r['metadata'])['model_id']) for r in rows]
+
     def promote_challenger(self, dataset, new_bundle, metadata, expected_release=None):
         ds = dataset.upper()
         if not self._loaded:

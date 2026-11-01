@@ -7,8 +7,27 @@ from flairguard.service.schemas import (
     ReplayStateResponse,
 )
 from flairguard.service.replay_manager import replay_manager
+import json
+from fastapi import Query
 
 router = APIRouter(prefix="/api/v1/replay", tags=["Simulation & Replay Lab"])
+
+
+@router.get('/{session_id}/export')
+def export_replay(session_id:str,limit:int=Query(1000,ge=1,le=1000)):
+    try:session=replay_manager.get_session(session_id)
+    except KeyError:raise HTTPException(404,'Session not found')
+    with session.store._get_connection() as c:
+        rows=c.execute('SELECT * FROM decision_events WHERE namespace=? AND asset_id=? AND cycle<=? ORDER BY cycle DESC LIMIT ?',
+            (session.namespace,str(session.engine_id),session.current_index,limit)).fetchall()
+    events=[]
+    for row in reversed(rows):
+        events.append(dict(cycle=row['cycle'],event_id=row['event_id'],model_id=row['model_id'],policy_id=row['policy_id'],
+            prediction=json.loads(row['prediction_json']),proposal=json.loads(row['proposal_json']),
+            result=json.loads(row['result_json']),telemetry=json.loads(row['telemetry_json'])))
+    return dict(session_id=session_id,namespace=session.namespace,current_cycle=session.current_index,
+        model_id=session.model_id,model_release=session.model_release,events=events,
+        orders=session.store.get_all_work_orders(),scope='Observed committed prefix only; workflow closure is not physical repair')
 
 
 @router.post("/start", response_model=ReplayStateResponse)

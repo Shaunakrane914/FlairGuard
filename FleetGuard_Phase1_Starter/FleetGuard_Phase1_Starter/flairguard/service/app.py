@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from .config import settings
 from .models_registry import model_registry
-from .routes import health, fleet, predictions, replay, orders, mlops, evidence
+from .routes import health, fleet, predictions, replay, orders, mlops, evidence, reliability
 
 logger = logging.getLogger("flairguard.service")
 
@@ -59,6 +59,7 @@ def create_app() -> FastAPI:
     app.include_router(orders.router)
     app.include_router(mlops.router)
     app.include_router(evidence.router)
+    app.include_router(reliability.router)
 
     # Static frontend hosting if built (searches both container and local paths)
     candidate_paths = [
