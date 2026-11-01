@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from .config import settings
 from .models_registry import model_registry
-from flairguard.data import load_subset
+from flairguard.data import read_trajectories
 from flairguard.quality import TELEMETRY_CHANNELS, ACTIVE_SENSORS
 from flairguard.storage import WorkOrderStore
 from flairguard.replay import CausalReplay
@@ -31,6 +31,7 @@ class ReplaySession:
         store: WorkOrderStore,
         current_cycle: int = 0,
         reset_epoch: int = 0,
+        model_release: Optional[str] = None,
     ):
         self.session_id = session_id
         self.dataset = dataset.upper()
@@ -46,7 +47,8 @@ class ReplaySession:
         self.store = store
         
         # Load bundle and initialize replay
-        self.bundle = model_registry.get_bundle(self.dataset)
+        self.model_release = model_release or model_registry.get_metadata(self.dataset)["provenance"]["release_id"]
+        self.bundle = model_registry.get_release_bundle(self.dataset,self.model_release)
         self.model_id = self.bundle["model_id"]
         
         # Build policy definition
@@ -69,9 +71,11 @@ class ReplaySession:
         # Calculate scientific baseline channel standard deviations for perturbation scaling
         self.sensor_stds = self.bundle.get("corruption_sensor_stds", {})
         if not self.sensor_stds:
-            numeric_cols = [s for s in ACTIVE_SENSORS if s in self.trajectory_df]
-            stds = self.trajectory_df[numeric_cols].std().to_dict()
-            self.sensor_stds = {k: max(float(v), 0.1) for k, v in stds.items()}
+            if "models" in self.bundle:
+                references = self.bundle["models"][self.bundle["selected"]].features_.scales_
+                self.sensor_stds = dict(zip(ACTIVE_SENSORS,map(float,references.mean(axis=0))))
+            else:
+                raise ValueError("Fit-only perturbation reference unavailable")
 
         # Scientific Fault injection state
         self.active_fault: Optional[Dict[str, Any]] = None
@@ -106,6 +110,15 @@ class ReplaySession:
             "direction": direction,
             "seed": seed,
         }
+        self.persist()
+
+    def persist(self):
+        self.store.save_replay_session(self.session_id,self.dataset,self.engine_id,self.split,
+            self.policy_name,self.base_namespace,self.current_index,self.total_cycles,
+            "COMPLETED" if self.current_index>=self.total_cycles else "ACTIVE",
+            dict(base_namespace=self.base_namespace,reset_epoch=self.reset_epoch,
+                 model_release=self.model_release,active_fault=self.active_fault,
+                 last_raw_values=self.last_raw_values))
 
     def _apply_fault_if_active(self, cycle: int, telemetry: Dict[str, float]) -> Tuple[Dict[str, float], bool]:
         """Apply active perturbation and return (effective_telemetry, is_perturbed)."""
@@ -149,10 +162,9 @@ class ReplaySession:
             raw_telemetry = {k: float(row[k]) for k in TELEMETRY_CHANNELS if k in row}
             
             # Record last observed raw values before applying any fault
-            self.last_raw_values = dict(raw_telemetry)
-            
             # Apply scientific perturbation if active
             effective_telemetry, is_perturbed = self._apply_fault_if_active(cycle, raw_telemetry)
+            self.last_raw_values = dict(raw_telemetry)
             
             # Consume strictly causally via CausalReplay
             asset_id = str(self.engine_id)
@@ -161,7 +173,7 @@ class ReplaySession:
             # Retrieve latest checkpoint evidence
             _, state = self.store.get_checkpoint(self.engine_id, asset_id=asset_id)
             event = self.store.get_event(self.engine_id, cycle, asset_id=asset_id)
-            pred_evidence = json.loads(event["prediction_evidence_json"]) if event and event.get("prediction_evidence_json") else {}
+            pred_evidence = json.loads(event["prediction_json"]) if event and event.get("prediction_json") else {}
             prop_data = json.loads(event["proposal_json"]) if event and event.get("proposal_json") else {}
             
             last_valid = state.get("last_valid") if state else None
@@ -187,7 +199,7 @@ class ReplaySession:
 
             # Persist progress position to durable SQLite store
             status = "COMPLETED" if self.current_index >= self.total_cycles else "ACTIVE"
-            self.store.update_replay_session_cycle(self.session_id, self.current_index, status=status)
+            self.persist()
 
         return results
 
@@ -205,9 +217,7 @@ class ReplaySession:
         self.replay = CausalReplay(self.bundle, self.store, self.policy_def)
         
         # Persist reset epoch to database
-        self.store.update_replay_session_cycle(
-            self.session_id, 0, status="RESET", namespace=self.namespace
-        )
+        self.persist()
 
 
 class ReplayManager:
@@ -221,7 +231,8 @@ class ReplayManager:
     def _get_dataset_data(self, dataset: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
         dataset = dataset.upper()
         if dataset not in self._cache_data:
-            train_df, test_df, _ = load_subset(settings.data_dir, dataset)
+            train_df = read_trajectories(settings.data_dir / f"train_{dataset}.txt")
+            test_df = read_trajectories(settings.data_dir / f"test_{dataset}.txt")
             self._cache_data[dataset] = (train_df, test_df)
         return self._cache_data[dataset]
 
@@ -271,6 +282,7 @@ class ReplayManager:
             status="ACTIVE",
             config={"split": split, "policy": policy_name, "namespace": ns},
         )
+        session.persist()
         return session
 
     def get_session(self, session_id: str) -> ReplaySession:
@@ -287,14 +299,16 @@ class ReplayManager:
         engine_id = sess_record["engine_id"]
         split = sess_record["split"]
         policy_name = sess_record["policy_name"]
-        namespace = sess_record["namespace"]
+        config = json.loads(sess_record["config_json"])
+        namespace = config.get("base_namespace",sess_record["namespace"])
         current_cycle = sess_record["current_cycle"]
         
         train_df, test_df = self._get_dataset_data(dataset)
         source_df = train_df if split == "train" else test_df
         engine_df = source_df[source_df.engine_id == engine_id]
         
-        store = WorkOrderStore(settings.db_path, namespace=namespace)
+        restored_namespace = f"{namespace}_ep{config.get('reset_epoch',0)}" if config.get('reset_epoch',0) else namespace
+        store = WorkOrderStore(settings.db_path, namespace=restored_namespace)
         session = ReplaySession(
             session_id=session_id,
             dataset=dataset,
@@ -305,13 +319,20 @@ class ReplayManager:
             trajectory_df=engine_df,
             store=store,
             current_cycle=current_cycle,
+            reset_epoch=config.get("reset_epoch",0),
+            model_release=config.get("model_release"),
         )
-        
+        session.active_fault = config.get("active_fault")
+        session.last_raw_values = config.get("last_raw_values",{})
+        checkpoint_cycle,_ = store.get_checkpoint(engine_id,asset_id=str(engine_id))
+        if checkpoint_cycle is not None:
+            session.current_index = max(current_cycle,checkpoint_cycle)
+            current_cycle = session.current_index
         # Rehydrate last evidence if available
         if current_cycle > 0:
             last_event = store.get_event(engine_id, current_cycle)
             if last_event:
-                pred_ev = json.loads(last_event["prediction_evidence_json"]) if last_event.get("prediction_evidence_json") else {}
+                pred_ev = json.loads(last_event["prediction_json"]) if last_event.get("prediction_json") else {}
                 prop = json.loads(last_event["proposal_json"]) if last_event.get("proposal_json") else {}
                 res = json.loads(last_event["result_json"]) if last_event.get("result_json") else {}
                 session.last_evidence = {

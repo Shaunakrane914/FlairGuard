@@ -1,6 +1,7 @@
 """Main FastAPI application factory for FlairGuard AI Platform."""
 from pathlib import Path
 import logging
+import secrets
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -28,6 +29,18 @@ def create_app() -> FastAPI:
         description="Connected Fleet Reliability & Predictive Maintenance Platform — Tata Elxsi Teliport S4 Case Study 1.",
         lifespan=lifespan,
     )
+
+    @app.middleware("http")
+    async def protect_mutations(request: Request, call_next):
+        if request.method in ("POST", "PUT", "PATCH", "DELETE"):
+            origin = request.headers.get("origin")
+            if origin and origin not in settings.cors_origins:
+                return JSONResponse(status_code=403, content={"detail": "Untrusted origin"})
+            if not settings.api_key:
+                return JSONResponse(status_code=503, content={"detail": "State changes disabled: configure FLAIRGUARD_API_KEY"})
+            if not secrets.compare_digest(request.headers.get("x-api-key", ""), settings.api_key):
+                return JSONResponse(status_code=401, content={"detail": "Valid operator API key required"})
+        return await call_next(request)
 
     # CORS configuration - strict trusted localhost development & deployment origins
     app.add_middleware(
@@ -66,7 +79,7 @@ def create_app() -> FastAPI:
             status_code=500,
             content={
                 "error": "InternalServerError",
-                "message": "An internal service error occurred. The incident has been recorded in the platform audit log.",
+                "message": "An internal service error occurred. See the server log.",
                 "path": request.url.path,
             }
         )

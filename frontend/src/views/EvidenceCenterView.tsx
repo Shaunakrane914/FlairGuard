@@ -161,7 +161,7 @@ export const EvidenceCenterView: React.FC = () => {
               </thead>
               <tbody>
                 {fd001Benchmarks.length === 0 ? (
-                  <tr><td colSpan={5} style={{ textAlign: "center", color: "var(--text-muted)" }}>Loading evidence...</td></tr>
+                  <tr><td colSpan={5} style={{ textAlign: "center", color: "var(--text-muted)" }}>Evidence unavailable or loading; no fallback values.</td></tr>
                 ) : (
                   fd001Benchmarks.map((b) => (
                     <tr
@@ -208,7 +208,7 @@ export const EvidenceCenterView: React.FC = () => {
               </thead>
               <tbody>
                 {fd002Benchmarks.length === 0 ? (
-                  <tr><td colSpan={5} style={{ textAlign: "center", color: "var(--text-muted)" }}>Loading evidence...</td></tr>
+                  <tr><td colSpan={5} style={{ textAlign: "center", color: "var(--text-muted)" }}>Evidence unavailable or loading; no fallback values.</td></tr>
                 ) : (
                   fd002Benchmarks.map((b) => (
                     <tr
@@ -300,7 +300,7 @@ export const EvidenceCenterView: React.FC = () => {
         </div>
         <p style={{ fontSize: "0.825rem", color: "var(--text-secondary)", marginBottom: "1.25rem" }}>
           Trains genuine scikit-learn / LightGBM models on labeled arrivals, evaluates on strictly held-out validation engines,
-          logs actual metrics to MLflow, and executes atomic serving hot-reload only when beating champion threshold (&gt;2.0%).
+          logs measured metrics to MLflow. Automatic promotion is blocked until a fresh acceptance cohort is supplied; historical research labels support development comparisons only.
         </p>
 
         <div

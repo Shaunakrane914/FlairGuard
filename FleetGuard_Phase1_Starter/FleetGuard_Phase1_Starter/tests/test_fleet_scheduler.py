@@ -7,6 +7,13 @@ from flairguard.fleet_scheduler import (
     EngineSimProfile,
 )
 from flairguard.service.config import settings
+from flairguard.scheduler_evaluation import evaluate_fleet, compare_fleet, load_failure_times
+
+
+def evaluated(scheduler, profiles, policy):
+    world = load_failure_times(settings.data_dir, "FD002", [p.engine_id for p in profiles])
+    return evaluate_fleet(scheduler, profiles, world, policy)
+
 
 
 @pytest.fixture
@@ -19,7 +26,7 @@ def test_scheduler_policy_execution(sample_profiles):
     """Verify all 4 policies complete without runtime exceptions."""
     scheduler = FleetMaintenanceScheduler(num_bays=2, service_duration=4, service_threshold_rul=25.0)
     for pol in SchedulePolicy:
-        metrics = scheduler.simulate_fleet(sample_profiles, policy=pol)
+        metrics = evaluated(scheduler, sample_profiles, pol)
         assert metrics.policy == pol.value
         assert metrics.total_engines_evaluated == len(sample_profiles)
         assert metrics.serviced_count >= 0
@@ -32,8 +39,8 @@ def test_bay_capacity_scaling(sample_profiles):
     scheduler_1bay = FleetMaintenanceScheduler(num_bays=1, service_duration=5, service_threshold_rul=25.0)
     scheduler_3bays = FleetMaintenanceScheduler(num_bays=3, service_duration=5, service_threshold_rul=25.0)
 
-    m1 = scheduler_1bay.simulate_fleet(sample_profiles, policy=SchedulePolicy.RISK_AWARE)
-    m3 = scheduler_3bays.simulate_fleet(sample_profiles, policy=SchedulePolicy.RISK_AWARE)
+    m1 = evaluated(scheduler_1bay, sample_profiles, SchedulePolicy.RISK_AWARE)
+    m3 = evaluated(scheduler_3bays, sample_profiles, SchedulePolicy.RISK_AWARE)
 
     assert m3.mean_queue_wait_cycles <= m1.mean_queue_wait_cycles
     assert m3.total_fleet_cost <= m1.total_fleet_cost
@@ -42,7 +49,8 @@ def test_bay_capacity_scaling(sample_profiles):
 def test_comparison_evaluation_ranking(sample_profiles):
     """evaluate_comparison should return all 4 policies sorted by total fleet cost."""
     scheduler = FleetMaintenanceScheduler(num_bays=2, service_duration=4)
-    comparison = scheduler.evaluate_comparison(sample_profiles)
+    world = load_failure_times(settings.data_dir, "FD002", [p.engine_id for p in sample_profiles])
+    comparison = compare_fleet(scheduler, sample_profiles, world)
     assert len(comparison) == 4
     # Verify sorted ascending by total fleet cost
     costs = [c.total_fleet_cost for c in comparison]
@@ -66,3 +74,4 @@ def test_live_snapshot_semantics(sample_profiles):
         else:
             assert b.engine_id is not None
             assert b.cycles_remaining > 0
+

@@ -10,7 +10,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # Stage 2: Python Backend Runtime & Static Serving
-FROM python:3.11-slim AS runtime
+FROM python:3.13-slim AS runtime
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -23,7 +23,8 @@ WORKDIR /app
 
 # Install Python requirements
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements-serving.lock.txt ./
+RUN pip install --no-cache-dir -r requirements.txt -c requirements-serving.lock.txt
 
 # Copy Python codebase, models, and NASA data
 COPY FleetGuard_Phase1_Starter/FleetGuard_Phase1_Starter/ /app/

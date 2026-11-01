@@ -86,7 +86,7 @@ export const FleetSchedulerView: React.FC = () => {
             Depot Maintenance Capacity & Scheduling Optimizer
           </h1>
           <p style={{ margin: "0.25rem 0 0", color: "#64748b", fontSize: "0.875rem" }}>
-            Resource-constrained hangar bay scheduling. Compares dispatch policies (FCFS vs EDF vs RUL Priority vs Risk-Optimal) to prevent queue-induced in-flight failures.
+            Resource-constrained hangar bay scheduling. Compares dispatch policies (FCFS vs EDF vs RUL Priority vs Uncalibrated margin) on identical saved-model predictions. No calibrated failure probability or promoted scheduler.
           </p>
         </div>
 
@@ -213,7 +213,7 @@ export const FleetSchedulerView: React.FC = () => {
             onChange={(e) => setActivePolicy(e.target.value)}
             style={{ width: "100%", padding: "0.5rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.875rem" }}
           >
-            <option value="RISK_AWARE">RISK_AWARE (FlairGuard Champion)</option>
+            <option value="RISK_AWARE">RISK_AWARE (Uncalibrated margin heuristic)</option>
             <option value="RUL_PRIORITY">RUL_PRIORITY (Lowest Point RUL)</option>
             <option value="EDF">EDF (Earliest Deadline First)</option>
             <option value="FCFS">FCFS (First-Come, First-Served)</option>
@@ -342,7 +342,7 @@ export const FleetSchedulerView: React.FC = () => {
                     <td style={{ padding: "0.6rem 0.75rem", color: item.predicted_rul < 15 ? "#dc2626" : "#475569", fontWeight: 600 }}>
                       {item.predicted_rul} cycles
                     </td>
-                    <td style={{ padding: "0.6rem 0.75rem" }}>±{item.uncertainty_sigma}</td>
+                    <td style={{ padding: "0.6rem 0.75rem" }}>{item.uncertainty_sigma == null ? "Unavailable" : `Margin ${item.uncertainty_sigma}`}</td>
                     <td style={{ padding: "0.6rem 0.75rem", color: item.waiting_cycles > 5 ? "#d97706" : "#475569" }}>
                       {item.waiting_cycles} cycles
                     </td>
@@ -376,7 +376,7 @@ export const FleetSchedulerView: React.FC = () => {
           <div>
             <h2 style={{ fontSize: "1.1rem", fontWeight: 700, margin: 0, display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <TrendingUp size={18} color="#10b981" />
-              Comparative Policy Performance (Rigorous Counterfactual Evaluation)
+              Comparative Policy Performance (Descriptive Simulation)
             </h2>
             <p style={{ fontSize: "0.8rem", color: "#64748b", margin: "0.25rem 0 0" }}>
               Evaluated on {engineLimit} engines from {selectedDataset} under constrained depot capacity ({numBays} bays, {serviceDuration} cycles service lead-time).
@@ -404,8 +404,8 @@ export const FleetSchedulerView: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {comparisonMetrics.map((m, idx) => {
-                  const isChampion = m.policy === "RISK_AWARE" || idx === 0;
+                {comparisonMetrics.map((m) => {
+                  const isChampion = false; // No policy is promoted by a descriptive run.
                   return (
                     <tr
                       key={m.policy}

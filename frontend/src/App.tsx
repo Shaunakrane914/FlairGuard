@@ -42,6 +42,11 @@ export const App: React.FC = () => {
 
   return (
     <div>
+      <label style={{display:"block",padding:"0.5rem 1rem",fontSize:"0.8rem"}}>
+        Operator key (this browser session only): <input type="password" aria-label="Operator API key"
+          defaultValue={sessionStorage.getItem("flairguard_operator_key") || ""}
+          onChange={(e) => sessionStorage.setItem("flairguard_operator_key",e.target.value)} />
+      </label>
       {/* Top Navigation Bar */}
       <header className="app-header">
         <div className="brand-section">

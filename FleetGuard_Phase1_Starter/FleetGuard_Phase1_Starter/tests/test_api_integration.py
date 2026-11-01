@@ -23,7 +23,7 @@ from flairguard.storage import WorkOrderStore
 @pytest.fixture(scope="module")
 def client():
     app = create_app()
-    with TestClient(app) as test_client:
+    with TestClient(app, headers={"X-API-Key": settings.api_key}) as test_client:
         yield test_client
 
 

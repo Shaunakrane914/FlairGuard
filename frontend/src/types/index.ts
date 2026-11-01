@@ -156,7 +156,7 @@ export interface QueuedEngineState {
   requested_cycle: number;
   current_cycle: number;
   predicted_rul: number;
-  uncertainty_sigma: number;
+  uncertainty_sigma: number | null;
   urgency_score: number;
   waiting_cycles: number;
   status: string;

@@ -1,0 +1,33 @@
+{
+  "overall": "NOT_ALL_ACCEPTANCE_CONDITIONS_MET",
+  "branch": "fix/scientific-operational-integrity",
+  "base_commit": "f6f4977",
+  "tests": 100,
+  "policy_runs": 16,
+  "engine_episodes": 2872,
+  "historical_files_unchanged": 452,
+  "docker_runtime": "PASS",
+  "local_runtime": "PASS",
+  "docker_image": "sha256:5c530ef6bf76622efc19777b9390a210dbc241f9507c1d8e63aca6a866fd4a39",
+  "gates": {
+    "no_operational_labels": "PASS",
+    "saved_model_predictions": "PASS",
+    "causal_prefixes": "PASS",
+    "failure_service_boundaries": "PASS",
+    "independent_execution_costs": "PASS",
+    "failed_evaluation_blocks_promotion": "PASS",
+    "required_tracking_fails_closed": "PASS",
+    "durable_promotion_restart_rollback": "PASS",
+    "authentication_origin_checks": "PASS",
+    "full_regressions": "PASS",
+    "historical_preservation": "PASS",
+    "frontend_build": "PASS",
+    "fresh_scientific_promotion": "BLOCKED_NO_FRESH_COHORT",
+    "calibrated_risk_superiority": "NOT_ESTABLISHED",
+    "four_subset_serving": "PARTIAL_FD001_FD002_ONLY",
+    "browser_to_backend": "NOT_RUN_BROWSER_UNAVAILABLE"
+  },
+  "scheduler_run": "causal-scheduler-v1-run003",
+  "test_log": "tests-final-v3.log",
+  "docker_verification": "docker-runtime-v3/runtime_report.json"
+}

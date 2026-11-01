@@ -17,9 +17,11 @@ import type {
 const BASE_URL = "/api/v1";
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  const key = sessionStorage.getItem("flairguard_operator_key");
   const res = await fetch(`${BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
+      ...(key ? {"X-API-Key": key} : {}),
       ...options?.headers,
     },
     ...options,
@@ -153,7 +155,7 @@ export const api = {
   retrainModel: (dataset: string = "FD002", challenger: string = "LightGBM") =>
     request<RetrainResult>("/models/retrain", {
       method: "POST",
-      body: JSON.stringify({ dataset, challenger_model: challenger, reveal_batch_size: 15 }),
+      body: JSON.stringify({ dataset, challenger_model: challenger, reveal_batch_size: 10 }),
     }),
   rollbackModel: (dataset: string) =>
     request<{ status: string; message: string; rollback_details: any }>("/models/rollback", {

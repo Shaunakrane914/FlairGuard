@@ -1,166 +1,170 @@
-"""Model registry and serving manager for FlairGuard AI.
-
-Loads and serves verified serialized model artifacts:
-- Phase A FD001 LightGBM baseline bundle
-- Phase B FD002 Multi-Regime LightGBM bundle
-Enforces genuine inference, atomic hot-reload promotion, and rollback capabilities.
-"""
-import copy
+"""Hash-verified, transactional model releases with durable rollback history."""
 import json
+import sqlite3
+import threading
+import uuid
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, Any, Optional, Tuple
-
 import joblib
-import numpy as np
-import pandas as pd
-
 from .config import settings
 from flairguard.evidence import file_sha
-from flairguard.quality import TELEMETRY_CHANNELS, ACTIVE_SENSORS
 
 
 class ModelRegistry:
-    """Singleton registry holding loaded model bundles, version provenance, and hot-reload state."""
+    def __init__(self, state_dir=None):
+        self.state_dir = Path(state_dir or settings.db_path.parent / "model_governance")
+        self._bundles = {}
+        self._metadata = {}
+        self._loaded = False
+        self._lock = threading.RLock()
 
-    def __init__(self):
-        self._bundles: Dict[str, Any] = {}
-        self._metadata: Dict[str, Dict[str, Any]] = {}
-        self._previous_bundles: Dict[str, Any] = {}
-        self._previous_metadata: Dict[str, Dict[str, Any]] = {}
-        self._loaded: bool = False
+    @contextmanager
+    def _connect(self):
+        self.state_dir.mkdir(parents=True, exist_ok=True)
+        c = sqlite3.connect(self.state_dir / "registry.sqlite", timeout=30)
+        c.row_factory = sqlite3.Row
+        c.execute("PRAGMA synchronous=FULL")
+        c.executescript("""
+        CREATE TABLE IF NOT EXISTS releases (
+          id TEXT PRIMARY KEY, dataset TEXT NOT NULL, artifact TEXT NOT NULL,
+          sha256 TEXT NOT NULL, metadata TEXT NOT NULL, previous TEXT);
+        CREATE TABLE IF NOT EXISTS active (dataset TEXT PRIMARY KEY, release_id TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS history (
+          seq INTEGER PRIMARY KEY, dataset TEXT, operation TEXT, release_id TEXT,
+          created TEXT DEFAULT CURRENT_TIMESTAMP);
+        """)
+        try:
+            with c:
+                yield c
+        finally:
+            c.close()
+
+    def _register(self, c, ds, bundle, meta, previous=None):
+        release = uuid.uuid4().hex
+        path = self.state_dir / (release + ".joblib")
+        joblib.dump(bundle, path)
+        # Close and fsync the immutable artifact before committing its pointer.
+        import os
+        with path.open("r+b") as stream:
+            os.fsync(stream.fileno())
+        if os.name != "nt":
+            directory = os.open(self.state_dir, os.O_RDONLY)
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
+        sha = file_sha(path)
+        if file_sha(path) != sha:
+            raise RuntimeError("Artifact changed while registering")
+        metadata = dict(meta)
+        metadata["provenance"] = dict(metadata.get("provenance", {}),
+                                      sha256=sha, release_id=release,
+                                      artifact_path=path.name)
+        c.execute("INSERT INTO releases VALUES (?,?,?,?,?,?)",
+                  (release, ds, path.name, sha, json.dumps(metadata), previous))
+        return release
 
     def load_models(self):
-        """Load verified model artifacts from disk with metrics resolved from genuine evidence artifacts."""
-        # 1. Load FD001 bundle & resolve genuine metrics
-        if settings.fd001_bundle_path.exists():
-            bundle_a = joblib.load(settings.fd001_bundle_path)
-            self._bundles["FD001"] = bundle_a
+        with self._lock, self._connect() as c:
+            c.execute("BEGIN IMMEDIATE")
+            for ds, path, kind in [
+                ("FD001", settings.fd001_bundle_path, "Phase A saved predictor"),
+                ("FD002", settings.fd002_bundle_path, "Phase B saved predictor"),
+            ]:
+                if not c.execute("SELECT 1 FROM active WHERE dataset=?", (ds,)).fetchone() and path.is_file():
+                    bundle = joblib.load(path)
+                    meta = dict(dataset=ds, model_id=bundle["model_id"], model_type=kind,
+                                champion=True, features_count=len(bundle.get("features", [])) or
+                                len(bundle["models"][bundle["selected"]].columns_),
+                                target_cap=bundle.get("rul_cap", 125), metrics={},
+                                provenance=dict(source_artifact=str(path), source_sha256=file_sha(path),
+                                                metrics_status="Unavailable in serving metadata; consult verified evidence"))
+                    release = self._register(c, ds, bundle, meta)
+                    c.execute("INSERT INTO active VALUES (?,?)", (ds, release))
+                    c.execute("INSERT INTO history(dataset,operation,release_id) VALUES (?,?,?)", (ds,"INITIALIZE",release))
+            self._loaded = True
+        self._refresh()
 
-            # Resolve metrics dynamically from independent_score.json
-            score_file = settings.fd001_bundle_path.parents[1] / "independent_score.json"
-            fd001_metrics = {"validation_mae": 25.77, "validation_rmse": 46.19, "nasa_score": 57603.7}
-            if score_file.is_file():
-                try:
-                    with open(score_file, "r", encoding="utf-8") as f:
-                        s_data = json.load(f)
-                    eval_m = s_data.get("model_metrics", {}).get("LightGBM", {}).get("evaluation", {}).get("endpoint", {})
-                    if eval_m:
-                        fd001_metrics = {
-                            "validation_mae": round(float(eval_m.get("mae", 25.77)), 2),
-                            "validation_rmse": round(float(eval_m.get("rmse", 46.19)), 2),
-                            "nasa_score": round(float(eval_m.get("nasa_mean", 57603.7)), 1),
-                        }
-                except Exception:
-                    pass
+    def _refresh(self):
+        with self._lock, self._connect() as c:
+            rows = c.execute("SELECT r.* FROM releases r JOIN active a ON a.release_id=r.id").fetchall()
+            bundles, metadata = {}, {}
+            for row in rows:
+                path = self.state_dir / row["artifact"]
+                if file_sha(path) != row["sha256"]:
+                    raise RuntimeError("Active artifact hash mismatch: " + row["dataset"])
+                old = self._metadata.get(row["dataset"], {}).get("provenance", {}).get("release_id")
+                bundles[row["dataset"]] = self._bundles[row["dataset"]] if old == row["id"] else joblib.load(path)
+                bundles[row["dataset"]]["artifact_sha256"] = row["sha256"]
+                metadata[row["dataset"]] = json.loads(row["metadata"])
+            self._bundles, self._metadata = bundles, metadata
 
-            self._metadata["FD001"] = {
-                "dataset": "FD001",
-                "model_id": bundle_a.get("model_id", "fd001-lightgbm-baseline"),
-                "model_type": "LightGBM Regressor (Single-Regime Causal Features)",
-                "champion": True,
-                "features_count": len(bundle_a.get("features", [])),
-                "target_cap": bundle_a.get("rul_cap", 125),
-                "metrics": fd001_metrics,
-                "provenance": {
-                    "artifact_path": str(settings.fd001_bundle_path.relative_to(settings.root_dir)),
-                    "sha256": file_sha(settings.fd001_bundle_path),
-                    "protocol": "phase-a-fd001-v1",
-                },
-            }
-
-        # 2. Load FD002 bundle & resolve genuine metrics
-        if settings.fd002_bundle_path.exists():
-            bundle_b = joblib.load(settings.fd002_bundle_path)
-            self._bundles["FD002"] = bundle_b
-            selected_name = bundle_b.get("selected", "RegimeLightGBM")
-
-            # Resolve metrics dynamically from selection.json
-            sel_file = settings.fd002_bundle_path.parents[1] / "selection.json"
-            fd002_metrics = {"validation_mae": 33.04, "validation_rmse": 45.88, "phm08_score": 95543.4}
-            if sel_file.is_file():
-                try:
-                    with open(sel_file, "r", encoding="utf-8") as f:
-                        sel_data = json.load(f)
-                    sel_m = sel_data.get("selection_metrics", {}).get(selected_name, {})
-                    if sel_m:
-                        fd002_metrics = {
-                            "validation_mae": round(float(sel_m.get("mae_cycles", 33.04)), 2),
-                            "validation_rmse": round(float(sel_m.get("rmse_cycles", 45.88)), 2),
-                            "phm08_score": round(float(sel_m.get("phm08_score", 95543.4)), 1),
-                        }
-                except Exception:
-                    pass
-
-            self._metadata["FD002"] = {
-                "dataset": "FD002",
-                "model_id": bundle_b.get("model_id", "fd002-regime-lightgbm"),
-                "model_type": f"Regime-Aware {selected_name} (6 Flight Condition Regimes)",
-                "champion": True,
-                "features_count": 48,
-                "target_cap": 125,
-                "metrics": fd002_metrics,
-                "provenance": {
-                    "artifact_path": str(settings.fd002_bundle_path.relative_to(settings.root_dir)),
-                    "sha256": file_sha(settings.fd002_bundle_path),
-                    "protocol": bundle_b.get("protocol", {}).get("protocol_id", "phase-b-fd002-v1"),
-                },
-            }
-
-        self._loaded = True
-
-    def get_bundle(self, dataset: str) -> Dict[str, Any]:
-        dataset = dataset.upper()
+    def get_bundle(self, dataset):
         if not self._loaded:
             self.load_models()
-        if dataset not in self._bundles:
-            raise KeyError(f"Dataset model {dataset} not found in registry")
-        return self._bundles[dataset]
+        self._refresh()
+        return self._bundles[dataset.upper()]
 
-    def get_metadata(self, dataset: str) -> Dict[str, Any]:
-        dataset = dataset.upper()
+    def get_metadata(self, dataset):
+        self.get_bundle(dataset)
+        return self._metadata[dataset.upper()]
+
+    def get_release_bundle(self, dataset, release_id):
+        """Pin replay to immutable artifact even after a champion change or restart."""
+        with self._connect() as c:
+            row = c.execute("SELECT * FROM releases WHERE id=? AND dataset=?", (release_id,dataset.upper())).fetchone()
+            if row is None:
+                raise ValueError("Pinned model release unavailable")
+            path = self.state_dir / row['artifact']
+            if file_sha(path) != row['sha256']:
+                raise RuntimeError("Pinned model artifact hash mismatch")
+            bundle = joblib.load(path)
+            bundle['artifact_sha256'] = row['sha256']
+            return bundle
+
+    def list_models(self):
         if not self._loaded:
             self.load_models()
-        if dataset not in self._metadata:
-            raise KeyError(f"Metadata for {dataset} not found")
-        return self._metadata[dataset]
+        self._refresh()
+        return self._metadata.copy()
 
-    def list_models(self) -> Dict[str, Dict[str, Any]]:
-        if not self._loaded:
-            self.load_models()
-        return self._metadata
-
-    def promote_challenger(self, dataset: str, new_bundle: Dict[str, Any], metadata: Dict[str, Any]):
-        """Atomic hot-reload of champion model for incoming serving requests with rollback backup."""
+    def promote_challenger(self, dataset, new_bundle, metadata, expected_release=None):
         ds = dataset.upper()
         if not self._loaded:
             self.load_models()
-        # Save current active model as previous for rollback
-        if ds in self._bundles:
-            self._previous_bundles[ds] = copy.deepcopy(self._bundles[ds])
-            self._previous_metadata[ds] = copy.deepcopy(self._metadata[ds])
-        # Atomically activate new model
-        self._bundles[ds] = new_bundle
-        self._metadata[ds] = metadata
+        with self._lock, self._connect() as c:
+            c.execute("BEGIN IMMEDIATE")
+            prior = c.execute("SELECT release_id FROM active WHERE dataset=?", (ds,)).fetchone()
+            previous = prior[0] if prior else None
+            if expected_release is not None and previous != expected_release:
+                raise RuntimeError("Champion changed during evaluation; promotion blocked")
+            release = self._register(c, ds, new_bundle, metadata, previous)
+            c.execute("INSERT OR REPLACE INTO active VALUES (?,?)", (ds, release))
+            c.execute("INSERT INTO history(dataset,operation,release_id) VALUES (?,?,?)", (ds,"PROMOTE",release))
+        self._refresh()
 
-    def has_rollback(self, dataset: str) -> bool:
+    def has_rollback(self, dataset):
+        if not self._loaded:
+            self.load_models()
+        with self._connect() as c:
+            row = c.execute("SELECT r.previous FROM releases r JOIN active a ON a.release_id=r.id WHERE a.dataset=?", (dataset.upper(),)).fetchone()
+            return bool(row and row[0])
+
+    def rollback_champion(self, dataset):
         ds = dataset.upper()
-        return ds in self._previous_bundles
-
-    def rollback_champion(self, dataset: str) -> Dict[str, Any]:
-        """Restore previous champion model if available."""
-        ds = dataset.upper()
-        if not self.has_rollback(ds):
-            raise ValueError(f"No previous champion version available for rollback on {dataset}")
-        self._bundles[ds] = self._previous_bundles.pop(ds)
-        self._metadata[ds] = self._previous_metadata.pop(ds)
-        return {
-            "status": "ROLLED_BACK",
-            "dataset": ds,
-            "active_model_id": self._metadata[ds]["model_id"],
-            "model_type": self._metadata[ds]["model_type"],
-            "metrics": self._metadata[ds]["metrics"],
-        }
+        with self._lock, self._connect() as c:
+            c.execute("BEGIN IMMEDIATE")
+            row = c.execute("SELECT r.previous FROM releases r JOIN active a ON a.release_id=r.id WHERE a.dataset=?", (ds,)).fetchone()
+            if not row or not row[0]:
+                raise ValueError("No previous champion version available for rollback on " + ds)
+            previous = c.execute("SELECT * FROM releases WHERE id=?", (row[0],)).fetchone()
+            if file_sha(self.state_dir / previous["artifact"]) != previous["sha256"]:
+                raise RuntimeError("Rollback artifact hash mismatch")
+            c.execute("UPDATE active SET release_id=? WHERE dataset=?", (row[0], ds))
+            c.execute("INSERT INTO history(dataset,operation,release_id) VALUES (?,?,?)", (ds,"ROLLBACK",row[0]))
+        self._refresh()
+        meta = self._metadata[ds]
+        return dict(status="ROLLED_BACK", dataset=ds, active_model_id=meta["model_id"], model_type=meta["model_type"], metrics=meta["metrics"])
 
 
-# Global singleton instance
 model_registry = ModelRegistry()

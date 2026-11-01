@@ -39,7 +39,7 @@ def serve_prediction(req: PredictRequest):
     raw_prediction = None
     regime_id = None
     
-    if ds == "FD002":
+    if "models" in bundle:
         # Multi-regime model
         regime_model = bundle["models"][bundle["selected"]]
         df_obs = pd.DataFrame(history)

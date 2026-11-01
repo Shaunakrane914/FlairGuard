@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "prediction_absolute_differences": {
+    "original_prediction": 0.0,
+    "promoted_prediction": 0.0,
+    "rollback_prediction": 0.0
+  },
+  "docker_image_id": "sha256:5c530ef6bf76622efc19777b9390a210dbc241f9507c1d8e63aca6a866fd4a39",
+  "scheduler_rerun_equal": true
+}

@@ -14,6 +14,8 @@ services:
       - FLAIRGUARD_ENV=production
       - FLAIRGUARD_DB_PATH=/app/storage/flairguard_platform.db
       - FLAIRGUARD_DATA_DIR=/app/data/raw
+      - FLAIRGUARD_API_KEY=${FLAIRGUARD_API_KEY:?Set a private operator API key}
+      - FLAIRGUARD_MLFLOW_REQUIRED=true
     volumes:
       - flairguard-storage:/app/storage
       - flairguard-mlruns:/app/mlruns

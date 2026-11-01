@@ -34,3 +34,9 @@ Desktop.ini
 frontend/node_modules/
 frontend/dist/
 
+# Mutable model governance and experiment tracking
+**/model_governance/
+**/training_artifacts/
+**/mlruns/
+**/mlflow.sqlite
+

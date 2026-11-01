@@ -223,7 +223,7 @@ def get_scheduler_snapshot(
     try:
         pol_enum = SchedulePolicy(policy.upper())
     except ValueError:
-        pol_enum = SchedulePolicy.RISK_AWARE
+        raise HTTPException(status_code=422, detail="Unknown dispatch policy")
         
     try:
         profiles = build_profiles_from_dataset(settings.data_dir, ds, engine_limit=engine_limit)
@@ -255,7 +255,9 @@ def run_scheduler_simulation(
             service_duration=req.service_duration,
             service_threshold_rul=req.service_threshold_rul,
         )
-        comparison = scheduler.evaluate_comparison(profiles)
+        from flairguard.scheduler_evaluation import load_failure_times, compare_fleet
+        world = load_failure_times(settings.data_dir, ds, [p.engine_id for p in profiles])
+        comparison = compare_fleet(scheduler, profiles, world)
         return comparison
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Simulation failed: {str(e)}")

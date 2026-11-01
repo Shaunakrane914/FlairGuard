@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     fd001_bundle_path: Path = ROOT / "artifacts" / "phase_a" / "fd001-v1-run002" / "models" / "bundle.joblib"
     fd002_bundle_path: Path = ROOT / "artifacts" / "phase_b" / "fd002-v1-run002" / "models" / "bundle.joblib"
     
+    mlflow_required: bool = True
+    mlflow_tracking_uri: str = ""
+    api_key: str = ""
+
     # Server configuration & Security hardening
     host: str = "127.0.0.1"
     port: int = 8000

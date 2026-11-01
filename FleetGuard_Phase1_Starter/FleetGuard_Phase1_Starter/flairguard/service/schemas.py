@@ -171,7 +171,7 @@ class ModelMetadataResponse(BaseModel):
 class RetrainRequest(BaseModel):
     dataset: Literal["FD001", "FD002"] = "FD002"
     challenger_model: str = "LightGBM_Optuna"
-    reveal_batch_size: int = 10
+    reveal_batch_size: int = Field(10, ge=1, le=10)
 
 
 class RetrainResponse(BaseModel):
