@@ -46,3 +46,5 @@ frontend/test-results/
 frontend/playwright-report/
 
 **/matlab_jobs/
+
+.github/
