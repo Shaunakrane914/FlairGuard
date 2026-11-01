@@ -11,8 +11,7 @@
 - **Project Title:** **FlairGuard AI — A Verified Connected-Fleet Reliability Platform**
 - **Project Subtitle:** *Causal RUL prediction, telemetry-fault recovery and auditable maintenance decisions under constrained service capacity.*
 - **Template Compliance:** Built strictly on the official **TELIPORT Season 4** template with original Tata Elxsi branding, dimensions (16:9 widescreen, 12,192,000 × 6,858,000 EMU), and typography (Calibri design font).
-- **Candidate Fields (Intentionally Blank for Team Entry):**  
-  `Team: __________________    Members: __________________    College: __________________    Team ID: __________`
+- **Identification Line:** `Team: FlairGuard | Case Study: 1`
 
 ---
 
