@@ -4,7 +4,7 @@ Existing authenticated administrative routes remain in place. No new write endpo
 
 | Route | Contract |
 |---|---|
-| `GET /api/v1/reliability/summary` | Hash-bound accepted run, explicit retrospective scope, protocol/lineage, all condition/policy results, paired engine uncertainty and FD004 diagnostic. Missing or changed required evidence is 503. |
+| `GET /api/v1/reliability/summary` | Hash-bound accepted run, explicit retrospective scope, protocol/lineage, all condition/policy results, conditional fixed-cost reweighting ranges and FD004 diagnostic. `uncertainty_scope` states that shared queues are held fixed, so these are not new-fleet confidence intervals. Missing or changed required evidence is 503. |
 | `GET /api/v1/reliability/ledger?run_id=...` | Complete benchmark proposal/commit/review/start/completion/failure events and evaluator-only outcomes. This is labeled research, separate from live inference. Invalid path-like identities are rejected. |
 | `GET /api/v1/replay/{id}/export` | Current committed observed prefix, pinned model/release, current namespace and orders. No future telemetry is returned. |
 | `GET /api/v1/models/history` | Durable SQLite release/operation history and artifact hashes. |

@@ -39,6 +39,7 @@ def summary():
         execution=read_artifact(run,manifest,'execution.json'),
         results=read_artifact(run,manifest,'summary.json'),
         paired=read_artifact(run,manifest,'paired_engine_results.json'),
+        uncertainty_scope='Paired ranges reweight fixed executed engine costs; shared queues are not re-executed. These are conditional sensitivity ranges, not confidence intervals for a new fleet.',
         fd004=read_artifact(run,manifest,'fd004_danger_diagnostic.json'))
 
 

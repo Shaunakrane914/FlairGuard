@@ -28,8 +28,9 @@ def verify(run,data):
         if set(fold['risk_training_engines'])&set(fold['predictor_fit']+fold['preprocessing_fit']):raise AssertionError('OOF leakage')
         held+=fold['risk_training_engines']
     if sorted(held)!=sorted(p['lineage']['FD004']['predictor_fit']):raise AssertionError('OOF population incomplete')
-    spec=importlib.util.spec_from_file_location('sealed_phase_d_scorer',run/'source/scorer.py')
-    scorer=importlib.util.module_from_spec(spec);spec.loader.exec_module(scorer)
+    namespace={'__name__':'sealed_phase_d_scorer'}
+    source=run/'source/scorer.py'
+    exec(compile(source.read_text(encoding='utf-8'),str(source),'exec'),namespace)
     with (run/'per_engine_outcomes.csv').open(newline='') as stream:
         saved={(r['run_id'],int(r['engine_id'])):r for r in csv.DictReader(stream)}
     checked=episodes=0;seen=set()
@@ -39,7 +40,7 @@ def verify(run,data):
         if condition['fleet_limit']:expected=expected[:condition['fleet_limit']]
         world={eid:deaths[ds][eid]+((eid*7)%condition['offset'] if condition['offset'] else 0) for eid in expected}
         if world!={int(e):v for e,v in report['evaluator_failure_ticks'].items()}:raise AssertionError('Failure time or population mismatch')
-        independent=scorer.score(report['events'],world,condition,p['costs'])
+        independent=namespace['score'](report['events'],world,condition,p['costs'])
         production={r['engine_id']:r for r in report['production_outcomes']}
         for row in independent:
             key=(path.stem,row['engine_id']);actual=saved[key];prod=production[row['engine_id']]

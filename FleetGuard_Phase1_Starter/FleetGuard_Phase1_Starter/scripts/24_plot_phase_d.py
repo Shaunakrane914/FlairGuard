@@ -20,7 +20,7 @@ def render(run,output):
     axes[0].axvline(0,color='black',lw=1)
     axes[0].set_yticks(range(3),['Logistic risk','Boosted risk','Residual-CDF risk'])
     axes[0].set_xlabel('Mean cost difference versus tuned point (lower is better)')
-    axes[0].set_title('A. No risk candidate earns the frozen advantage criterion\n49 engines; scenarios/conditions averaged within engine before bootstrap',fontsize=11)
+    axes[0].set_title('A. No risk candidate earns the frozen advantage criterion\n49 source engines; conditional reweighting ranges, queues held fixed',fontsize=11)
     methods=['abstain','bounded_last','regime_impute','missing_aware','decision_fallback']
     names=['Abstain','Bounded last','Regime impute','Missingness model','Decision fallback']
     x=np.arange(len(methods));width=.35
