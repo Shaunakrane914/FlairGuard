@@ -6,92 +6,68 @@
 
 ---
 
-## 1. Slide Layout & Metadata
+## 1. Slide Title & Metadata
 
+- **Project Title:** **FlairGuard AI — A Verified Connected-Fleet Reliability Platform**
+- **Project Subtitle:** *Causal RUL prediction, telemetry-fault recovery and auditable maintenance decisions under constrained service capacity.*
 - **Template Compliance:** Built strictly on the official **TELIPORT Season 4** template with original Tata Elxsi branding, dimensions (16:9 widescreen, 12,192,000 × 6,858,000 EMU), and typography (Calibri design font).
-- **Candidate Fields:** Left blank for team entry as requested:
+- **Candidate Fields (Intentionally Blank for Team Entry):**  
   `Team: __________________    Members: __________________    College: __________________    Team ID: __________`
-- **Slide Title:** **FlairGuard AI**
-- **Core Problem Statement:** *Maintenance decisions when telemetry is missing, unreliable or constrained by service capacity.*
 
 ---
 
-## 2. End-to-End Architecture (Causal Observations to Auditable Maintenance Actions)
+## 2. Architecture Summary
 
-The 5-node flow chart illustrates how telemetry flows causally into physical depot actions without lookahead leakage:
+**NASA C-MAPSS → Regime-Aware Prognostics → Telemetry Quality & Recovery → Deterministic Maintenance Decisions → Persistent Work Orders & Audit**
 
-1. **Telemetry + Features**
-   - 21 sensor channels, 3 operational settings.
-   - Strictly past-only rolling feature windows (window lengths 5 and 20).
-   - Sensor imputation is derived exclusively from training-fit distributions by operating regime.
-2. **RUL + Anomaly Models**
-   - Multi-model ensemble: LightGBM / HistGradientBoosting / Ridge regression.
-   - Operating condition clustering and regime-aware normalization.
-   - Zero lookahead: trajectory evaluation respects causal prefix boundaries.
-3. **Telemetry Trust & Signal Integrity**
-   - Real-time sensor missingness, freeze, and staleness detection.
-   - Persistence tracking and model abstention when data quality falls below threshold.
-   - Degraded-telemetry recovery: prevents premature failure triggers from isolated sensor dropouts.
-4. **Rule-Based Triage**
-   - Deterministic RUL thresholds and data quality gating.
-   - Escalation to human operator review for edge-case faults and conflicting signals.
-   - No black-box autonomous overrides on ambiguous telemetry.
-5. **Orders + Execution**
-   - Priority-ranked maintenance dispatch and deduplication.
-   - ACID-compliant SQLite audit trail for all emitted work orders.
-   - Cross-process durable recovery: sessions and active work orders survive application and backend restarts.
+*FD001/FD002 operational serving; FD003/FD004 retrospective research coverage · MATLAB toolbox comparison integrated.*
+
+### Component Workflow:
+1. **NASA C-MAPSS:** 21 sensor channels, 3 operating settings; strictly past-only rolling feature windows (lengths 5 and 20).
+2. **Regime Prognostics:** Multi-model ensemble (LightGBM / HistGradientBoosting / Ridge) with operating condition clustering and regime-aware normalization.
+3. **Quality & Recovery:** Real-time sensor missingness, freeze, and staleness detection; persistence tracking and model abstention; 6 telemetry-recovery methods evaluated across 8 controlled conditions.
+4. **Deterministic Decisions:** Deterministic RUL thresholds and data quality gating; escalation to human operator review for edge-case faults and conflicting signals.
+5. **Work Orders & Audit:** Priority-ranked maintenance dispatch and deduplication; ACID-compliant SQLite audit trail for all emitted work orders; cross-process restart recovery.
 
 ---
 
-## 3. MATLAB Research Integration
+## 3. The Three Pillars: Trust, Value, Execution
 
-- **Role:** Asynchronous background analysis worker running authenticated jobs via MATLAB R2026b (`matlab -batch`).
-- **Algorithm:** Similarity-based Remaining Useful Life (RUL) estimation using historical degradation libraries.
-- **Scientific Integrity:**
-  - Evaluated on identical test engines and identical available prefixes as the Python models.
-  - Integration serves as a rigorous comparative research benchmark, **not** an operational claim of superiority over Python.
-  - Python serving remains fully functional and decoupled even when the MATLAB runtime is offline or unlicensed.
-- **Artifacts:** Full execution logs, input SHA-256 hashes, and output tables sealed in `artifacts/integration_release/matlab-api-v2/`.
+### Pillar 1: TRUST
+> **Engine-disjoint training and causal inference; decision-horizon risk evaluation; six telemetry-recovery methods tested across eight controlled conditions.**
+- Scalers and normalization parameters fitted exclusively on training engines; test trajectories are never observed during feature engineering.
+- All rolling aggregates reject future rows (zero lookahead).
+- Explicit abstention when data quality falls below operational thresholds.
+- Retraining on historical research labels correctly blocks automatic promotion, enforcing the requirement for untouched acceptance cohorts.
 
----
+### Pillar 2: VALUE
+> **FD002 trigger-outage scenario: 0/80 modeled failures with regime imputation versus 14/80 with bounded countdown.**  
+> *Scenario-specific retrospective result; no universal superiority claim.*
+- In simulated multi-cycle sensor dropouts on complex multi-regime engines (FD002), regime-conditional imputation maintained safe triage and eliminated premature unpredicted failures.
+- Constrained depot scheduler evaluates real depot bay capacity and turnaround durations rather than assuming infinite servicing availability.
+- Concrete economic accounting compares planned maintenance cost against unscheduled engine failure penalties and queue delay costs.
 
-## 4. The Three Pillars: Trust, Value, Execution
-
-### Pillar 1: TRUST (Scientific & Methodological Rigor)
-- **Engine-Disjoint Splits:** Normalization parameters and scalers are fitted exclusively on training engines; test trajectories are never observed during feature engineering.
-- **Causal History Guardrails:** All rolling aggregates reject future rows.
-- **Explicit Signal Missingness:** When sensors drop, models abstain rather than inventing synthetic sensor readings.
-- **Blocked Promotion Gate:** Retraining on historical research labels correctly flags that fresh acceptance labels are required before scientific champion promotion can occur.
-
-### Pillar 2: VALUE (Operational Fleet Reliability)
-- **Sensor Outage Mitigation:** Under an induced FD002 sensor outage scenario, regime-aware imputation produced **0/80 modeled fleet failures**, compared to **14/80 modeled failures** with a naive bounded countdown.
-- **Constrained Depot Scheduling:** Evaluates maintenance dispatch under realistic depot bay limits and turnaround times rather than assuming infinite servicing capacity.
-- **Actionable Economic Tradeoffs:** Direct comparison of maintenance costs (planned service vs. unscheduled engine failure penalties vs. queue wait times).
-
-### Pillar 3: EXECUTION (Production-Grade Software Engineering)
-- **FastAPI Backend + React Frontend:** 119/119 backend integration and unit tests passing.
-- **Durable State Management:** Sessions, work order statuses (`ACKNOWLEDGED`, `COMMITTED`), and model release pins survive server crashes and container restarts.
-- **Browser-Verified Workflows:** 100% passing Playwright end-to-end tests across desktop and mobile viewports with zero unhandled exceptions or console errors.
+### Pillar 3: EXECUTION
+> **Working FastAPI + React operator platform, authenticated work-order workflows, restart-safe replay, model-version pinning, real MLflow training and rollback verification.**  
+> **Real Chromium browser workflow and Docker restart checks completed.**
+- 114+ passing backend unit/integration tests and automated property regressions.
+- Durable state management: active sessions, work order statuses (`ACKNOWLEDGED`, `COMMITTED`), and model release pins survive server crashes and container restarts.
+- End-to-end Playwright browser tests pass across desktop (1440 px) and mobile (390 px) viewports with zero unhandled exceptions or console errors.
 
 ---
 
-## 5. Scope & Empirical Boundaries
+## 4. Evidence Footer & Empirical Boundaries
 
-- **Data Origin:** Retrospective study based on the NASA C-MAPSS turbofan degradation benchmark (FD001–FD004).
-- **Population Coverage:** 332 full-life policy runs independently scored across 169 source engines.
-- **Honest Limitations:** Maintenance cost models are stylized and scenario-dependent. Advanced dispatch policies and candidate models require field validation and fresh acceptance cohorts before industrial production deployment.
+> **114 passing tests · 332 primary policy runs · 17,822 scored engine episodes from 169 distinct source engines · Independent event-ledger verification · MATLAB toolbox comparison integrated**  
+> *NASA C-MAPSS retrospective simulation; costs are hypothetical. Scientific model promotion requires fresh acceptance data.*
 
----
-
-## 6. Official Speaker Notes (Embedded in PPTX)
-
-```text
-Sources: docs/phase-d/RESULTS.md; artifacts/phase_d/reliability-v1-run002/summary.json, FD002/causal_trigger/reference, regime_impute versus bounded_last, point policy, 80 engines. Failure counts are modeled, not field safety outcomes. Primary cohort has 169 distinct source engines; repeated policy episodes are not independent engines. MATLAB evidence: artifacts/integration_release/matlab-api-v2/report.json and its sealed job outputs, plus final genuine Chromium job workflow. MATLAB/Python serving roles remain distinct. Scientific promotion remains blocked without fresh acceptance labels. All team fields intentionally blank at user request. Architecture uses causal windows 5 and 20, fit-derived regime scaling, quality gates, deterministic thresholds and durable work orders; no LLM is involved. FD001/FD002 serve; FD003/FD004 are retrospective research/browsing. Required qualification format is one slide, as specified by the user.
-```
+- **MATLAB Integration Role:** Connected as an asynchronous background worker (`matlab -batch`) executing similarity-based RUL estimation. Serves as a comparative research benchmark with sealed evidence; Python serving operates completely independently.
+- **Population Integrity:** 332 policy runs across 169 distinct turbofan engines; repeated policy episodes are not treated as independent engines.
+- **Honest Limitations:** Maintenance cost models are stylized and scenario-dependent. Industrial production deployment requires physical field validation.
 
 ---
 
-## 7. Captured Application Screenshots (in `screenshots/`)
+## 5. Captured Application Screenshots (in `screenshots/`)
 
 | Screenshot File | Demonstrated Operator Workflow |
 |---|---|
